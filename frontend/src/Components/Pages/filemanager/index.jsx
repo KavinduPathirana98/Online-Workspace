@@ -3,13 +3,22 @@ import {
   FileImageOutlined,
   FilePdfOutlined,
   FileTextOutlined,
+  FileExclamationOutlined,
 } from "@ant-design/icons";
 import React, { Fragment, useState, useEffect } from "react";
 import { PlusSquare, Upload } from "react-feather";
 import errorImg from "../../../assets/images/search-not-found.png";
 import { toast } from "react-toastify";
 import { H4, H6, LI, P, UL, Image } from "../../../AbstractElements";
-import { CardBody, CardHeader, Form, Input, Media } from "reactstrap";
+import {
+  Button,
+  CardBody,
+  CardHeader,
+  Form,
+  Input,
+  Label,
+  Media,
+} from "reactstrap";
 
 const FileManager = ({ socket, fileNames, setFileNames }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -34,32 +43,36 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
       alert("Error uploading file");
     }
   };
+  const getFile = () => {
+    document.getElementById("upfile").click();
+  };
   const handleDownload = async (file) => {
     try {
       // const fileName = "example.txt"; // Change to the file name you want to download
-      const response = await fetch(
-        `http://localhost:5000/download/?fileName=${file}`
-      );
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", file);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
+      const response = await axios
+        .get(`http://localhost:5000/download/?fileName=${file}`, {
+          responseType: "blob", // Specify that you expect a blob response
+        })
+        .then((response) => {
+          const blob = new Blob([response.data]); // Access response data to create a blob
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", file);
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+        });
     } catch (error) {
       console.error("Error downloading file:", error);
     }
   };
-  const getFile = () => {
-    document.getElementById("upfile").click();
-  };
+
   return (
     <div>
       <CardHeader>
         <Media>
-          <Form className="search-file form-inline">
+          {/* <Form className="search-file form-inline">
             <div className="mb-0 form-group">
               <i className="fa fa-search"></i>
               <input
@@ -70,7 +83,7 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
                 placeholder="Search..."
               />
             </div>
-          </Form>
+          </Form> */}
           <Media body className="text-end">
             <Form className="d-inline-flex">
               <div className="btn btn-primary" onClick={getFile}>
@@ -94,6 +107,85 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
           </Media>
         </Media>
       </CardHeader>
+      <div className="row">
+        <div className="col-md-12">
+          {fileNames.map((file) => {
+            return (
+              <div>
+                {file.includes("pdf") ? (
+                  <div
+                    className="container mt-3 mb-3"
+                    style={{
+                      borderColor: "black",
+                      border: "1px solid black",
+                      padding: "5px",
+                    }}
+                  >
+                    <FilePdfOutlined style={{ fontSize: "300%" }} />
+                    <a> {file}</a>
+                  </div>
+                ) : file.includes("docx") ? (
+                  <div
+                    className="container mt-3 mb-3"
+                    style={{
+                      borderColor: "black",
+                      border: "1px solid black",
+                      padding: "5px",
+                    }}
+                  >
+                    <FileTextOutlined style={{ fontSize: "300%" }} />{" "}
+                    <Label
+                      onClick={() => {
+                        handleDownload(file);
+                      }}
+                    >
+                      {file}
+                    </Label>
+                  </div>
+                ) : file.includes("png") ||
+                  file.includes("jpg") ||
+                  file.includes("jpeg") ? (
+                  <div
+                    className="container mt-3 mb-3"
+                    style={{
+                      borderColor: "black",
+                      border: "1px solid black",
+                      padding: "5px",
+                    }}
+                  >
+                    <FileImageOutlined style={{ fontSize: "300%" }} />
+                    <a
+                      onClick={() => {
+                        handleDownload(file);
+                      }}
+                    >
+                      {file}
+                    </a>
+                  </div>
+                ) : (
+                  <div
+                    className="container mt-3 mb-3"
+                    style={{
+                      borderColor: "black",
+                      border: "1px solid black",
+                      padding: "5px",
+                    }}
+                  >
+                    <FileExclamationOutlined style={{ fontSize: "300%" }} />
+                    <a
+                      onClick={() => {
+                        handleDownload(file);
+                      }}
+                    >
+                      {file}
+                    </a>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
       {/* <CardBody className="file-manager">
         <H4 attrH4={{ className: "mb-3" }}>All Files</H4>{" "}
         <H6>Recently Opened Files</H6>
@@ -171,58 +263,6 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
           })}
         </div>
       </div> */}
-      <div className="row">
-        <div className="col-md-12">
-          {fileNames.map((file) => {
-            return (
-              <div>
-                {file.includes("pdf") ? (
-                  <>
-                    <FilePdfOutlined />
-                    <a> {file}</a>
-                  </>
-                ) : file.includes("docx") ? (
-                  <div
-                    className="container mt-3 mb-3"
-                    style={{
-                      radiu: "5%",
-                      borderColor: "black",
-                      border: "1px solid black",
-                      padding: "5px",
-                    }}
-                  >
-                    <>
-                      <FileTextOutlined style={{ fontSize: "300%" }} />{" "}
-                      <a
-                        onClick={() => {
-                          handleDownload(file);
-                        }}
-                      >
-                        {file}
-                      </a>
-                    </>
-                  </div>
-                ) : file.includes("png") ||
-                  file.includes("jpg") ||
-                  file.includes("jpeg") ? (
-                  <>
-                    <FileImageOutlined style={{ fontSize: "150%" }} />{" "}
-                    <a
-                      onClick={() => {
-                        handleDownload(file);
-                      }}
-                    >
-                      {file}
-                    </a>
-                  </>
-                ) : (
-                  ""
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 };
