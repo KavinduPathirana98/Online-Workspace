@@ -1,0 +1,109 @@
+{
+	"info": {
+		"_postman_id": "40eb234e-9805-4ec7-a5f7-63ce1f594d68",
+		"name": "TempCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13383170"
+	},
+	"item": [
+		{
+			"name": "Crop Recomendation",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"temperature\": \"20\", \"humidity\": \"50\", \"ph\": \"6.5\", \"rainfall\": \"200\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/getCropRec",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"getCropRec"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature Prediction",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"longitude\": \"79.8612\", \"latitude\": \"6.9271\", \"date\": \"2024-03-18\", \"time\": \"14:30:00\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.6:5000/getTempPred",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"6"
+					],
+					"port": "5000",
+					"path": [
+						"getTempPred"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Soil Moisture Prediction",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"longitude\": \"79\", \"latitude\": \"7.6\", \"date\": \"2022-12-02\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.6:5000/getSoilMoisture",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"6"
+					],
+					"port": "5000",
+					"path": [
+						"getSoilMoisture"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
