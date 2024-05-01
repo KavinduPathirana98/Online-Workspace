@@ -1,4 +1,5 @@
 const express = require("express");
+//Cross Origin Reference Sharing Enable to send request using browser
 const cors = require("cors");
 const multer = require("multer");
 const { createServer } = require("http");
@@ -16,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
-// Configure CORS
+// Configure  and enable CORS
 app.use(cors());
 
 // Create HTTP server
@@ -41,7 +42,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Array to store socket connections
+// Array to store socket connections from each user
 let connections = [];
 
 // Function to get file names in the uploads folder
@@ -57,7 +58,7 @@ const getFileNames = () => {
     });
   });
 };
-
+//Socket Functions
 // Function to emit file names to all connected clients
 const emitFileNames = async () => {
   try {
@@ -79,6 +80,7 @@ io.on("connect", (socket) => {
   // Send initial file list on connection
   emitFileNames();
 
+  //to emit updates from notepad
   socket.on("text", (data) => {
     // Broadcast text data to all connected clients except the sender
     connections.forEach((con) => {
@@ -88,6 +90,7 @@ io.on("connect", (socket) => {
     });
   });
 
+  //to emit updates from whiteboard
   socket.on("elements", (data) => {
     // Broadcast elements data to all connected clients except the sender
     connections.forEach((con) => {
@@ -96,7 +99,7 @@ io.on("connect", (socket) => {
       }
     });
   });
-
+  //mouse movement
   socket.on("down", (data) => {
     // Broadcast "down" event to all connected clients except the sender
     connections.forEach((con) => {
@@ -107,6 +110,8 @@ io.on("connect", (socket) => {
   });
 });
 
+//End Points
+
 // File upload endpoint
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
@@ -116,6 +121,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
   emitFileNames();
   res.status(200).json({ message: "File uploaded successfully" });
 });
+
 // File download endpoint
 app.get("/download/", (req, res) => {
   const fileName = req.query.fileName;
@@ -159,8 +165,9 @@ try {
 }
 
 //Database Interaction Endpoints
-const userController = require("./routes/userRoutes");
 
+//User Model Interaction
+const userController = require("./routes/userRoutes");
 app.use("/api/user", userController);
 
 // Start the server
