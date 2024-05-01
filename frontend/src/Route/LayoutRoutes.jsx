@@ -19,14 +19,14 @@ const LayoutRoutes = () => {
       timeout: 10000,
       transports: ["websocket"],
     };
-
+    //Create Socket
     const newSocket = io(server, connectionOptions);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
       console.log("Connected to newSocket.io server!");
     });
-
+    //Join backend socket using keys
     newSocket.on("servedElements", (elementsCopy) => {
       setElements(elementsCopy.elements);
     });
