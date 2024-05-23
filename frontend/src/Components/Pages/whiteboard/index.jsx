@@ -1,84 +1,44 @@
 import { SelectOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
-import { createElement, useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import io from "socket.io-client";
 import rough from "roughjs/bundled/rough.esm.js";
 
 const generator = rough.generator();
 
-const WhiteBoard = ({ elements, setElements, socket, x }) => {
-  // State for managing drawing elements and interactions
-
+const WhiteBoard = ({ elements, setElements, socket }) => {
   const [action, setAction] = useState("none");
   const [tool, setTool] = useState("line");
-
   const [selectedElement, setSelectedElement] = useState(null);
-  // const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // const server = "http://192.168.1.7:5000";
-    // const connectionOptions = {
-    //   "force new connection": true,
-    //   reconnectionAttempts: "Infinity",
-    //   timeout: 10000,
-    //   transports: ["websocket"],
-    // };
-    // const socket = io(server, connectionOptions);
-    //setSocket(socket);
-    // socket.on("connect", () => {
-    //   console.log("Connected to socket.io server!");
-    // });
-    // socket.on("servedElements", (elementsCopy) => {
-    //   setElements(elementsCopy.elements);
-    // });
-    // socket.on("text", (data) => {
-    //   console.log("d", data);
-    //   // Assuming there's an input element with id "inputText"
-    //   setInx(data);
-    // });
-    // Clean up the socket connection when the component is unmounted
-    // return () => {
-    //   socket.disconnect();
-    // };
+    // Socket setup (if needed)
+    // Cleanup function to disconnect socket on unmount
   }, []);
 
-  // UseLayoutEffect: Responsible for rendering drawing elements
   useLayoutEffect(() => {
-    // Get the canvas element by its ID
     const canvas = document.getElementById("canvas");
-
-    // Get the 2D rendering context of the canvas
     const ctx = canvas.getContext("2d");
-
-    // Create a RoughJS canvas instance associated with the canvas element
     const roughCanvas = rough.canvas(canvas);
-
-    // Clear the entire canvas to ensure a clean drawing surface
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // If there are saved elements to render
     if (elements && elements.length > 0) {
-      // Iterate through each saved element
       elements.forEach(({ roughElement }) => {
-        // Use RoughJS to draw the element on the canvas
         roughCanvas.draw(roughElement);
       });
     }
   }, [elements]);
 
-  // Function to create a new drawing element
   const createElement = (id, x1, y1, x2, y2, elementType) => {
     let roughElement;
-    // Use the RoughJS generator to create a rough element (line or rectangle)
     if (elementType === "line") {
       roughElement = generator.line(x1, y1, x2, y2);
     } else if (elementType === "rect") {
       roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1);
     } else if (elementType === "cir") {
-      roughElement = generator.circle(x1, y1, x2 - x1, y2 - y1);
+      roughElement = generator.circle(x1, y1, Math.abs(x2 - x1));
     }
 
-    // Return an object representing the element, including its coordinates and RoughJS representation
     return { id, elementType, x1, y1, x2, y2, roughElement };
   };
 
@@ -104,74 +64,65 @@ const WhiteBoard = ({ elements, setElements, socket, x }) => {
     });
   };
 
-  // Event handler for mouse down
+  const getCanvasCoordinates = (event) => {
+    const canvas = document.getElementById("canvas");
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+  };
+
   const handleMouseDown = (e) => {
-    const { clientX, clientY } = e;
+    const { x, y } = getCanvasCoordinates(e);
     if (tool === "selection") {
-      const element = getElementAtPosition(clientX, clientY);
+      const element = getElementAtPosition(x, y);
       if (element) {
-        const offsetX = clientX - element.x1;
-        const offsetY = clientY - element.y1;
+        const offsetX = x - element.x1;
+        const offsetY = y - element.y1;
         setSelectedElement({ ...element, offsetX, offsetY });
         setAction("moving");
       }
     } else {
-      const { clientX, clientY } = e;
       const id = elements.length;
-      // Create a new drawing element when mouse down is detected
-      const element = createElement(
-        id,
-        clientX,
-        clientY,
-        clientX,
-        clientY,
-        tool
-      );
+      const element = createElement(id, x, y, x, y, tool);
       setElements((prevState) => [...prevState, element]);
       setAction("drawing");
     }
   };
 
   const updateElement = (id, x1, y1, x2, y2, tool) => {
-    const UpdatedElement = createElement(id, x1, y1, x2, y2, tool);
-
+    const updatedElement = createElement(id, x1, y1, x2, y2, tool);
     const elementsCopy = [...elements];
-    elementsCopy[id] = UpdatedElement;
+    elementsCopy[id] = updatedElement;
     setElements(elementsCopy);
     socket.emit("elements", elementsCopy);
   };
-  // const updateText = (text) => {
-  //   setInx(text);
-  //   socket.emit("text", text);
-  // };
-  // Event handler for mouse move
+
   const handleMouseMove = (e) => {
-    const { clientX, clientY } = e;
+    const { x, y } = getCanvasCoordinates(e);
 
     if (tool === "selection") {
-      e.target.style.cursor = getElementAtPosition(clientX, clientY, elements)
+      e.target.style.cursor = getElementAtPosition(x, y, elements)
         ? "move"
         : "default";
     }
 
     if (action === "drawing") {
-      // Find the index of the last element created during mouse down
       const index = elements.length - 1;
       const { x1, y1 } = elements[index];
-      // Update the element's coordinates for dynamic drawing
-      updateElement(index, x1, y1, clientX, clientY, tool);
+      updateElement(index, x1, y1, x, y, tool);
     } else if (action === "moving") {
       const { id, x1, x2, y1, y2, elementType, offsetX, offsetY } =
         selectedElement;
       const width = x2 - x1;
       const height = y2 - y1;
-      const newX = clientX - offsetX;
-      const newY = clientY - offsetY;
+      const newX = x - offsetX;
+      const newY = y - offsetY;
       updateElement(id, newX, newY, newX + width, newY + height, elementType);
     }
   };
 
-  // Event handler for mouse up
   const handleMouseUp = () => {
     setAction("none");
     setSelectedElement(null);
@@ -186,10 +137,8 @@ const WhiteBoard = ({ elements, setElements, socket, x }) => {
               <Button
                 name="tool"
                 id="selection"
-                //checked={tool === "rect"}
-                //value="rect"
                 className="mt-1"
-                onClick={(e) => setTool("selection")}
+                onClick={() => setTool("selection")}
               >
                 Drag N Drop
               </Button>
@@ -198,10 +147,8 @@ const WhiteBoard = ({ elements, setElements, socket, x }) => {
               <Button
                 name="tool"
                 id="rect"
-                //checked={tool === "rect"}
-                //value="rect"
                 className="mt-1"
-                onClick={(e) => setTool("rect")}
+                onClick={() => setTool("rect")}
               >
                 Rectangle
               </Button>
@@ -210,10 +157,8 @@ const WhiteBoard = ({ elements, setElements, socket, x }) => {
               <Button
                 id="line"
                 name="tool"
-                //value="line"
-                //checked={tool === "line"}
                 className="mt-1"
-                onClick={(e) => setTool("line")}
+                onClick={() => setTool("line")}
               >
                 Line
               </Button>
@@ -222,10 +167,8 @@ const WhiteBoard = ({ elements, setElements, socket, x }) => {
               <Button
                 id="cir"
                 name="tool"
-                //value="line"
-                //checked={tool === "line"}
                 className="mt-1"
-                onClick={(e) => setTool("cir")}
+                onClick={() => setTool("cir")}
               >
                 Circle
               </Button>
@@ -241,15 +184,8 @@ const WhiteBoard = ({ elements, setElements, socket, x }) => {
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      {/* <input
-        type="text"
-        id="inx"
-        value={inx}
-        onChange={(e) => {
-          updateText(e.target.value);
-        }}
-      /> */}
     </div>
   );
 };
+
 export default WhiteBoard;

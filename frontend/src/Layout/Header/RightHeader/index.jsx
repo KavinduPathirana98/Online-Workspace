@@ -9,8 +9,12 @@ import BookmarkHeader from "./BookmarkHeader";
 import UserHeader from "./UserHeader";
 import { UL } from "../../../AbstractElements";
 import { Col } from "reactstrap";
+import ChatPanel from "../../../Components/Pages/chat";
 
 const RightHeader = () => {
+  const openChat = () => {
+    document.querySelector(".history").classList.add("show");
+  };
   return (
     <Fragment>
       <Col
@@ -19,11 +23,12 @@ const RightHeader = () => {
         md="7"
         className="nav-right pull-right right-header col-8 p-0 ms-auto"
       >
+        <ChatPanel />
         {/* <Col md="8"> */}
         <UL attrUL={{ className: "simple-list nav-menus flex-row" }}>
-          {/* <Language />
-          <Searchbar />
-          <BookmarkHeader /> */}
+          {/* <Language />*/}
+          <Searchbar onclick={openChat} />
+          {/* <BookmarkHeader /> */}
           <MoonLight />
           {/* <CartHeader /> */}
           {/* <Notificationbar /> */}
