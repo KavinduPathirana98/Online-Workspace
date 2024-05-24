@@ -80,6 +80,17 @@ io.on("connect", (socket) => {
   // Send initial file list on connection
   emitFileNames();
 
+  socket.on("joinRoom", ({ username, room }) => {
+    socket.username = username;
+    socket.room = room;
+    console.log(room);
+    socket.join(room);
+    socket.to(socket.room).emit("message", {
+      user: socket.username,
+      text: `${username} has joined!`,
+    });
+  });
+
   //to emit updates from notepad
   socket.on("text", (data) => {
     // Broadcast text data to all connected clients except the sender
@@ -106,6 +117,12 @@ io.on("connect", (socket) => {
       if (con.id !== socket.id) {
         con.emit("ondown", { x: data.x, y: data.y });
       }
+    });
+  });
+  socket.on("chatMessage", (message) => {
+    io.to(socket.room).emit("message", {
+      user: socket.username,
+      text: message,
     });
   });
 });

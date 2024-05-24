@@ -4,46 +4,48 @@ import { routes } from "./Routes";
 import AppLayout from "../Layout/Layout";
 import { socket_api } from "../Constant";
 import { io } from "socket.io-client";
+import socket from "../Components/Socket";
 
 const LayoutRoutes = () => {
   const [current, setCurrent] = useState("1");
-  const [socket, setSocket] = useState(null);
+  // const [socket, setSocket] = useState(null);
   const [elements, setElements] = useState([]);
   const [fileNames, setFileNames] = useState([]);
   const [inx, setInx] = useState("");
   useEffect(() => {
-    const server = socket_api;
-    const connectionOptions = {
-      "force new connection": true,
-      reconnectionAttempts: "Infinity",
-      timeout: 10000,
-      transports: ["websocket"],
-    };
-    //Create Socket
-    const newSocket = io(server, connectionOptions);
-    setSocket(newSocket);
+    // const server = socket_api;
+    // const connectionOptions = {
+    //   "force new connection": true,
+    //   reconnectionAttempts: "Infinity",
+    //   timeout: 10000,
+    //   transports: ["websocket"],
+    // };
+    // //Create Socket
+    // const socket = io(server, connectionOptions);
 
-    newSocket.on("connect", () => {
-      console.log("Connected to newSocket.io server!");
+    //setSocket(socket);
+
+    socket.on("connect", () => {
+      console.log("Connected to socket.io server!");
     });
     //Join backend socket using keys
-    newSocket.on("servedElements", (elementsCopy) => {
+    socket.on("servedElements", (elementsCopy) => {
       setElements(elementsCopy.elements);
     });
-    newSocket.on("text", (data) => {
+    socket.on("text", (data) => {
       console.log("d", data);
 
       setInx(data);
     });
 
     // Event listener for 'fileList' event received from the server
-    newSocket.on("fileList", (data) => {
+    socket.on("fileList", (data) => {
       // Update state with received file names
       setFileNames(data);
     });
 
     return () => {
-      newSocket.disconnect();
+      socket.disconnect();
     };
   }, []);
   return (
@@ -56,7 +58,7 @@ const LayoutRoutes = () => {
                 path={path}
                 element={
                   <Component
-                    socket={socket}
+                    // socket={socket}
                     elements={elements}
                     setElements={setElements}
                     fileNames={fileNames}

@@ -3,10 +3,11 @@ import { Button, Col, Row } from "antd";
 import { useEffect, useLayoutEffect, useState } from "react";
 import io from "socket.io-client";
 import rough from "roughjs/bundled/rough.esm.js";
+import socket from "../../Socket";
 
 const generator = rough.generator();
 
-const WhiteBoard = ({ elements, setElements, socket }) => {
+const WhiteBoard = ({ elements, setElements }) => {
   const [action, setAction] = useState("none");
   const [tool, setTool] = useState("line");
   const [selectedElement, setSelectedElement] = useState(null);
