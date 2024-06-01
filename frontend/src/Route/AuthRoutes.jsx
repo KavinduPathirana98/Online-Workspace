@@ -49,7 +49,7 @@ export const authRoutes = [
     Component: <LoginSweetalert />,
   },
   {
-    path: `${process.env.PUBLIC_URL}/register-simple/:layout`,
+    path: `${process.env.PUBLIC_URL}/register-simple/`,
     Component: <RegisterSimple />,
   },
   {

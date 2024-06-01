@@ -32,7 +32,7 @@ router.post("/register", async (req, res) => {
     if (emailRes) {
       res.json({
         msg: "Email Already Exist !",
-        code: 1,
+        code: 0,
         data: [{ email: email }],
       });
     } else {
