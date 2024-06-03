@@ -1639,4 +1639,4 @@ export const AddNewBookmark = "Add New Bookmark";
 export const Back = "Back";
 export const DatatableOrderhistory = "Datatable Order history";
 
-export const socket_api = "http://localhost:5000/";
+export const socket_api = "http://192.168.1.6:5000/";

@@ -4,9 +4,35 @@ export const MENUITEMS = [
     menucontent: "Dashboards,Widgets",
     Items: [
       {
+        title: "Analytics",
+        icon: "sample-page",
+        type: "sub",
+        children: [
+          {
+            active: false,
+            path: `${process.env.PUBLIC_URL}/analytics/home`,
+            title: "Home",
+            type: "link",
+          },
+          {
+            active: false,
+            path: `${process.env.PUBLIC_URL}/pages/note-pad`,
+            title: "Dashboard",
+            type: "link",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    menutitle: "Components",
+    menucontent: "Tools,Materials",
+    Items: [
+      {
         title: "Pages",
         icon: "sample-page",
         type: "sub",
+        active: false,
         children: [
           {
             active: false,
@@ -28,20 +54,6 @@ export const MENUITEMS = [
           },
         ],
       },
-
-      // {
-      //   title: "Support Ticket",
-      //   icon: "support-tickets",
-      //   type: "sub",
-      //   children: [
-      //     {
-      //       active: false,
-      //       path: `http://support.pixelstrap.com/help-center`,
-      //       title: "Rise Ticket",
-      //       type: "link",
-      //     },
-      //   ],
-      // },
     ],
   },
 ];

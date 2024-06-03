@@ -75,13 +75,13 @@ router.post("/login", async (req, res) => {
           })
           .send();
       } else {
-        res.json({ msg: "Password is Incorrect", code: 1, data: [] }).send();
+        res.json({ msg: "Password is Incorrect", code: 0, data: [] }).send();
       }
     } else {
       res
         .json({
           msg: "Cannot find account connected to this email",
-          code: 1,
+          code: 0,
           data: [],
         })
         .send();

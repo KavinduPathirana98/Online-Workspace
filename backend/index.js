@@ -125,6 +125,19 @@ io.on("connect", (socket) => {
       text: message,
     });
   });
+  socket.on("sendingSignal", (payload) => {
+    io.to(payload.userToSignal).emit("userJoined", {
+      signal: payload.signal,
+      callerID: payload.callerID,
+    });
+  });
+
+  socket.on("returningSignal", (payload) => {
+    io.to(payload.callerID).emit("receivingReturnedSignal", {
+      signal: payload.signal,
+      id: socket.id,
+    });
+  });
 });
 
 //End Points

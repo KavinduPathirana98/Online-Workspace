@@ -19,6 +19,7 @@ import {
   Label,
   Media,
 } from "reactstrap";
+import { socket_api } from "../../../Constant";
 
 const FileManager = ({ socket, fileNames, setFileNames }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -32,7 +33,7 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
     formData.append("file", selectedFile);
 
     try {
-      await axios.post("http://localhost:5000/upload", formData, {
+      await axios.post(socket_api + "upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -50,7 +51,7 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
     try {
       // const fileName = "example.txt"; // Change to the file name you want to download
       const response = await axios
-        .get(`http://localhost:5000/download/?fileName=${file}`, {
+        .get(socket_api + `download/?fileName=${file}`, {
           responseType: "blob", // Specify that you expect a blob response
         })
         .then((response) => {

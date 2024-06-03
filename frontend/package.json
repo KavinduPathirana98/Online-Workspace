@@ -79,9 +79,11 @@
     "reactstrap": "^9.0.1",
     "roughjs": "^4.6.6",
     "sass": "^1.57.0",
+    "simple-peer": "^9.11.1",
     "socket.io-client": "^4.7.5",
     "sweetalert2": "^11.4.8",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "webrtc-adapter": "^9.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -131,6 +133,8 @@
     ]
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "https-localhost": "^4.7.1",
     "moment": "^2.29.2",
     "moment-timezone": "^0.5.34",
     "react": "^17.0.2",

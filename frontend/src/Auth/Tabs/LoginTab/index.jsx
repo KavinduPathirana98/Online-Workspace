@@ -8,6 +8,7 @@ import {
   Password,
   RememberPassword,
   SignIn,
+  socket_api,
 } from "../../../Constant";
 
 import { useNavigate } from "react-router-dom";
@@ -17,10 +18,36 @@ import { handleResponse } from "../../../Services/fack.backend";
 
 import CustomizerContext from "../../../_helper/Customizer";
 import OtherWay from "./OtherWay";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const LoginTab = ({ selected }) => {
-  const [email, setEmail] = useState("test@gmail.com");
-  const [password, setPassword] = useState("test123");
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const navigate = useNavigate();
+  const login = () => {
+    let model = {
+      email: email,
+      password: password,
+    };
+    axios
+      .post(socket_api + "api/user/login", model)
+      .then((response) => {
+        console.log(response);
+        if (response.data.code == 0) {
+          toast.error(response.data.msg);
+        } else {
+          toast.success(response.data.msg);
+          setValue(man);
+          setName("Emay Walter");
+          localStorage.setItem("token", Jwt_token);
+          localStorage.setItem("login", JSON.stringify(true));
+          localStorage.setItem("authenticated", true);
+          navigate("/cuba-context/pages/white-board/");
+        }
+      })
+      .catch((err) => {});
+  };
   const [togglePassword, setTogglePassword] = useState(false);
   const history = useNavigate();
   const { layoutURL } = useContext(CustomizerContext);
@@ -61,10 +88,11 @@ const LoginTab = ({ selected }) => {
         return user;
       });
   };
-
+  localStorage.setItem("authenticated", true);
   return (
     <Fragment>
       <Form className="theme-form">
+        {localStorage.getItem("authenticated")}
         <H4>
           {selected === "simpleLogin"
             ? "Sign In With Simple Login"
@@ -113,7 +141,7 @@ const LoginTab = ({ selected }) => {
               attrBtn={{
                 color: "primary",
                 className: "d-block w-100 mt-2",
-                onClick: (e) => loginAuth(e),
+                onClick: (e) => login(),
               }}
             >
               {SignIn}
@@ -123,7 +151,7 @@ const LoginTab = ({ selected }) => {
               attrBtn={{
                 color: "primary",
                 className: "d-block w-100 mt-2",
-                onClick: (e) => loginWithJwt(e),
+                onClick: (e) => login(),
               }}
             >
               {LoginWithJWT}
