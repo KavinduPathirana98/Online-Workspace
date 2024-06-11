@@ -1639,4 +1639,16 @@ export const AddNewBookmark = "Add New Bookmark";
 export const Back = "Back";
 export const DatatableOrderhistory = "Datatable Order history";
 
-export const socket_api = "http://192.168.1.6:5000/";
+export const socket_api = "http://localhost:5000/";
+
+// Function to generate a random string of a given length
+export const generateRandomString = (length) => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+  return result;
+};

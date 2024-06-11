@@ -198,7 +198,11 @@ try {
 
 //User Model Interaction
 const userController = require("./routes/userRoutes");
+const roomController = require("./routes/roomRoute");
+
 app.use("/api/user", userController);
+//Room Model Interaction
+app.use("/api/room", roomController);
 
 // Start the server
 httpServer.listen(PORT, () => {

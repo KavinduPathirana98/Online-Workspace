@@ -10,14 +10,24 @@ import { Account, Admin, Inbox, LogOut, Taskboard } from "../../../Constant";
 const UserHeader = () => {
   const history = useNavigate();
   const [profile, setProfile] = useState("");
-  const [name, setName] = useState("Emay Walter");
+  const [name, setName] = useState(
+    JSON.parse(localStorage.getItem("userAuth")).fName +
+      " " +
+      JSON.parse(localStorage.getItem("userAuth")).lName
+  );
   const { layoutURL } = useContext(CustomizerContext);
   const authenticated = JSON.parse(localStorage.getItem("authenticated"));
   const auth0_profile = JSON.parse(localStorage.getItem("auth0_profile"));
 
   useEffect(() => {
     setProfile(localStorage.getItem("profileURL") || man);
-    setName(localStorage.getItem("Name") ? localStorage.getItem("Name") : name);
+    setName(
+      localStorage.getItem("userAuth")
+        ? JSON.parse(localStorage.getItem("userAuth")).fName +
+            " " +
+            JSON.parse(localStorage.getItem("userAuth")).lName
+        : name
+    );
   }, []);
 
   const Logout = () => {
@@ -46,7 +56,11 @@ const UserHeader = () => {
         <div className="media-body">
           <span>{authenticated ? "auth0_profile.name" : name}</span>
           <P attrPara={{ className: "mb-0 font-roboto" }}>
-            {Admin} <i className="middle fa fa-angle-down"></i>
+            {localStorage.getItem("userAuth") &&
+            JSON.parse(localStorage.getItem("userAuth")).category == 1
+              ? "Admin"
+              : "User"}{" "}
+            <i className="middle fa fa-angle-down"></i>
           </P>
         </div>
       </div>

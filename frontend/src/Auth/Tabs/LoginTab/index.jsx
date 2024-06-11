@@ -38,6 +38,8 @@ const LoginTab = ({ selected }) => {
           toast.error(response.data.msg);
         } else {
           toast.success(response.data.msg);
+          let model = response.data.data[0].user;
+          localStorage.setItem("userAuth", JSON.stringify(model));
           setValue(man);
           setName("Emay Walter");
           localStorage.setItem("token", Jwt_token);

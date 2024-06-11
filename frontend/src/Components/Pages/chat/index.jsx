@@ -4,87 +4,22 @@ import { ContactHistory } from "../../../Constant";
 import socket from "../../Socket";
 
 const ChatPanel = () => {
-  const [username, setUsername] = useState("");
-  const [room, setRoom] = useState("");
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [joined, setJoined] = useState(false);
-  const [randomNumber, setRandomNumber] = useState(null);
-  const [randomString, setRandomString] = useState("");
-
-  // Function to generate a random number between min and max (inclusive)
-  const generateRandomNumber = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  // Function to generate a random string of a given length
-  const generateRandomString = (length) => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      result += characters.charAt(randomIndex);
-    }
-    return result;
-  };
-  // Handler for generating random values
-  const handleGenerate = () => {
-    const number = generateRandomNumber(1, 100); // Generates a number between 1 and 100
-    const string = generateRandomString(10); // Generates a string of length 10
-    setRandomNumber(number);
-    setRandomString(string);
-    setUsername(number);
-    setRoom(string);
-  };
-  const socketRef = React.useRef(null);
-  const joinRoom = () => {
-    if (username && room) {
-      console.log(username, room);
-      socket.emit("joinRoom", { username, room });
-      setJoined(true);
-      socketRef.current = socket;
-    }
-  };
-
-  const sendMessage = () => {
-    if (message) {
-      socket.emit("chatMessage", message);
-      setMessage("");
-    }
-  };
   const closehistory = () => {
     document.querySelector(".history").classList.remove("show");
   };
-  const handleJoin = () => {
-    if (username && room) {
-      // Store username and room in local storage
-      localStorage.setItem("username", username);
-      localStorage.setItem("room", room);
-      joinRoom(username, room);
-    }
-  };
 
   useEffect(() => {
-    handleGenerate();
-
-    // Retrieve stored user and room info from local storage
-    const storedUsername = localStorage.getItem("username");
-    const storedRoom = localStorage.getItem("room");
-
-    if (username && room) {
-      setUsername(username);
-      setRoom(room);
-      joinRoom(username, room);
-    }
-
-    socket.on("message", (message) => {
-      setMessages((msgs) => [...msgs, message]);
-    });
-
-    return () => {
-      socket.off("message");
-    };
+    // if (username && room) {
+    //   setUsername(username);
+    //   setRoom(room);
+    //   joinRoom(username, room);
+    // }
+    // socket.on("message", (message) => {
+    //   setMessages((msgs) => [...msgs, message]);
+    // });
+    // return () => {
+    //   socket.off("message");
+    // };
   }, []);
   return (
     <Fragment>
@@ -119,7 +54,7 @@ const ChatPanel = () => {
             </div>
           </div>
         </div>
-        {!joined ? (
+        {/* {!joined ? (
           <div>
             <input
               type="text"
@@ -152,7 +87,7 @@ const ChatPanel = () => {
             />
             <button onClick={sendMessage}>Send Message</button>
           </div>
-        )}
+        )} */}
       </div>
     </Fragment>
   );
