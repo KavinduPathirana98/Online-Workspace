@@ -77,7 +77,7 @@ const Home = () => {
     if (username && room) {
       // Store username and room in local storage
       //   localStorage.setItem("username", username);
-      //   localStorage.setItem("room", room);
+      //   localStorage.setItem("room", room);+
       joinRoom(username, room);
     }
   };
