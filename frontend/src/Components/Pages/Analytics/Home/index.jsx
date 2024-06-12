@@ -1,5 +1,5 @@
 import { Button, Col, Form, Input, Row } from "antd";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   FormGroup,
   Label,
@@ -8,9 +8,9 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
-import { generateRandomString } from "../../../../Constant";
+import { generateRandomString, socket_api } from "../../../../Constant";
 import socket from "../../../Socket";
-
+import axios from "axios";
 const Home = () => {
   const [modal, setModal] = useState(false);
   const [roomID, setRoomID] = useState();
@@ -21,6 +21,38 @@ const Home = () => {
   const [joined, setJoined] = useState(false);
   const [form] = Form.useForm();
   const socketRef = React.useRef(null);
+  const userID = JSON.parse(localStorage.getItem("userAuth"))._id;
+  const createWorkspace = async () => {
+    try {
+      const values = await form.validateFields();
+
+      let model = {
+        roomName: values.roomName,
+        roomID: values.roomID,
+        createdUser: userID,
+        roomPassword: values.password,
+        users: [],
+      };
+      await axios
+        .post(socket_api + "api/room/create", model)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {});
+    } catch (err) {}
+  };
+
+  const getAllWorkspaces = async () => {
+    let model = {
+      userID: userID,
+    };
+    await axios
+      .post(socket_api + "api/room/search", model)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {});
+  };
   const joinRoom = () => {
     if (username && room) {
       console.log(username, room);
@@ -40,18 +72,24 @@ const Home = () => {
   const handleJoin = () => {
     if (username && room) {
       // Store username and room in local storage
-      localStorage.setItem("username", username);
-      localStorage.setItem("room", room);
+      //   localStorage.setItem("username", username);
+      //   localStorage.setItem("room", room);
       joinRoom(username, room);
     }
   };
   // Retrieve stored user and room info from local storage
   const Username = localStorage.getItem("username");
   const Room = localStorage.getItem("room");
+
   const toggle = () => {
     setModal(!modal);
-    setRoomID(generateRandomString(12));
+    const room = generateRandomString(12);
+    setRoomID(room);
+    form.setFieldValue("roomID", room);
   };
+  useEffect(() => {
+    getAllWorkspaces();
+  }, []);
   return (
     <Fragment>
       <Row className="mt-3">
@@ -68,13 +106,13 @@ const Home = () => {
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader>Create Workspace</ModalHeader>
         <ModalBody>
-          <Form>
+          <Form form={form}>
             <Row>
               <Col md={11}>
                 <FormGroup>
                   <Label>Workspace ID</Label>
-                  <Form.Item>
-                    <Input value={roomID} disabled type="text" maxLength={20} />
+                  <Form.Item name={"roomID"}>
+                    <Input disabled type="text" maxLength={20} />
                   </Form.Item>
                 </FormGroup>
               </Col>
@@ -82,7 +120,7 @@ const Home = () => {
               <Col md={11}>
                 <FormGroup>
                   <Label>Nick Name</Label>
-                  <Form.Item>
+                  <Form.Item name={"roomName"}>
                     <Input type="text" maxLength={20} />
                   </Form.Item>
                 </FormGroup>
@@ -92,7 +130,7 @@ const Home = () => {
               <Col md={11}>
                 <FormGroup>
                   <Label>Password</Label>
-                  <Form.Item>
+                  <Form.Item name={"password"}>
                     <Input type="password" />
                   </Form.Item>
                 </FormGroup>
@@ -101,7 +139,7 @@ const Home = () => {
               <Col md={11}>
                 <FormGroup>
                   <Label>Confirm Password</Label>
-                  <Form.Item>
+                  <Form.Item name={"cPassword"}>
                     <Input type="password" />
                   </Form.Item>
                 </FormGroup>
@@ -110,7 +148,13 @@ const Home = () => {
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button type="primary" color="primary">
+          <Button
+            onClick={() => {
+              createWorkspace();
+            }}
+            type="primary"
+            color="primary"
+          >
             Create
           </Button>
         </ModalFooter>

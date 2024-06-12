@@ -35,4 +35,43 @@ router.post("/create", async (req, res) => {
     res.json({ msg: err, code: 0, data: [] }).send();
   }
 });
+
+//Get All Rooms belongs
+router.post("/search", async (req, res) => {
+  try {
+    const { userID } = req.body;
+    let rooms = [];
+    const created = await Room.find({ createdUser: userID })
+      .then((rooms) => {
+        return rooms;
+        //  res.json(rooms);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    const belongs = await Room.find({ users: { $in: [userID] } }).populate(
+      "users",
+      "username email"
+    );
+    rooms.push(created);
+    rooms.push(belongs);
+    res
+      .json({
+        msg: "Successfully",
+        code: 1,
+        data: [{ rooms }],
+      })
+      .send();
+  } catch (err) {
+    console.error("Error finding rooms:", err);
+    res
+      .json({
+        msg: "Error",
+        code: 0,
+        data: [{ err }],
+      })
+      .send();
+  }
+});
 module.exports = router;

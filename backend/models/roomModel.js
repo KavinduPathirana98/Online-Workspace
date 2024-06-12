@@ -10,10 +10,7 @@ const RoomSchema = new Schema({
     type: String,
     required: true,
   },
-  createdUser: {
-    type: String,
-    required: true,
-  },
+  createdUser: { type: Schema.Types.ObjectId, ref: "User" },
   roomPassword: {
     type: String,
     required: true,
