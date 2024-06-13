@@ -15,6 +15,7 @@ import { generateRandomString, socket_api } from "../../../../Constant";
 import socket from "../../../Socket";
 import axios from "axios";
 import { Btn, H3, LI, UL } from "../../../../AbstractElements";
+import moment from "moment";
 const Home = () => {
   const [modal, setModal] = useState(false);
   const [roomID, setRoomID] = useState();
@@ -23,6 +24,8 @@ const Home = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [joined, setJoined] = useState(false);
+
+  const [myRooms, setMyRooms] = useState([]);
   const [form] = Form.useForm();
   const socketRef = React.useRef(null);
   const userID = JSON.parse(localStorage.getItem("userAuth"))._id;
@@ -53,7 +56,11 @@ const Home = () => {
     await axios
       .post(socket_api + "api/room/search", model)
       .then((response) => {
-        console.log(response);
+        if (response.data.code == 1) {
+          console.log("rooms", response.data.data[0]);
+          setMyRooms(response.data.data[0]);
+        } else {
+        }
       })
       .catch((error) => {});
   };
@@ -166,265 +173,41 @@ const Home = () => {
 
       <CardBody>
         <Row className="pricing-block">
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>{" "}
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>{" "}
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>{" "}
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>{" "}
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>{" "}
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>{" "}
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Standard"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"10"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content flex-row" }}>
-                <LI attrLI={{ className: "border-0" }}>{"50GB Disk Space"}</LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Premium"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"20"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content" }}>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"10% on all product"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Auther pack"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"50"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content" }}>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"Upload 50 product"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>
-          <Col lg="3" md="6">
-            <div className="pricingtable">
-              <div className="pricingtable-header">
-                <H3 attrH3={{ className: "title" }}>{"Auther pack"}</H3>
-              </div>
-              <div className="price-value">
-                <span className="currency">{"$"}</span>
-                <span className="amount">{"50"}</span>
-                <span className="duration">{"/mo"}</span>
-              </div>
-              <UL attrUL={{ className: "pricing-content" }}>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"Upload 50 product"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>
-                  {"50 Email Accounts"}
-                </LI>
-                <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
-                <LI attrLI={{ className: "border-0" }}>{"15 Subdomains"}</LI>
-              </UL>
-              <div className="pricingtable-signup">
-                <Btn attrBtn={{ color: "primary", size: "lg" }}>{"SignUp"}</Btn>
-              </div>
-            </div>
-          </Col>
+          {myRooms.map((item) => {
+            console.log(item);
+            return (
+              <Col lg="3" md="6">
+                <div className="pricingtable">
+                  <div className="pricingtable-header">
+                    <H3 attrH3={{ className: "title" }}>{item.roomName}</H3>
+                  </div>
+                  <div className="price-value">
+                    <span className="currency">{"$"}</span>
+                    <span className="amount">{"10"}</span>
+                    <span className="duration">{"/mo"}</span>
+                  </div>
+                  <UL attrUL={{ className: " flex-row" }}>
+                    <LI attrLI={{ className: "border-0" }}>
+                      {"Workspace ID :" + item.roomID}
+                    </LI>
+                    <LI attrLI={{ className: "border-0" }}>
+                      {"50 Email Accounts"}
+                    </LI>
+                    <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI>
+                    <LI attrLI={{ className: "border-0" }}>
+                      {"Created Date : " +
+                        moment(item.CreatedOn).format("yyyy-MMM")}
+                    </LI>
+                  </UL>
+                  <div className="pricingtable-signup">
+                    <Btn attrBtn={{ color: "primary", size: "lg" }}>
+                      {"Join"}
+                    </Btn>
+                  </div>
+                </div>
+              </Col>
+            );
+          })}
         </Row>
       </CardBody>
     </Fragment>

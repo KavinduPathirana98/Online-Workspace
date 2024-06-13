@@ -54,13 +54,20 @@ router.post("/search", async (req, res) => {
       "users",
       "username email"
     );
-    rooms.push(created);
-    rooms.push(belongs);
+    created &&
+      created.map((item) => {
+        rooms.push(item);
+      });
+    belongs &&
+      belongs.map((item) => {
+        rooms.push(item);
+      });
+
     res
       .json({
         msg: "Successfully",
         code: 1,
-        data: [{ rooms }],
+        data: [rooms],
       })
       .send();
   } catch (err) {
