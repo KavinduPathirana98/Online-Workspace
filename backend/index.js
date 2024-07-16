@@ -115,7 +115,7 @@ io.on("connect", (socket) => {
     // Broadcast "down" event to all connected clients except the sender
     connections.forEach((con) => {
       if (con.id !== socket.id) {
-        con.emit("ondown", { x: data.x, y: data.y });
+        con.emit("ondown", { x: data.x, y: data.y, email: data.email });
       }
     });
   });
