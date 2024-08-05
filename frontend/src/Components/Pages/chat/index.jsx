@@ -1,32 +1,42 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { H6, P } from "../../../AbstractElements";
 import { ContactHistory } from "../../../Constant";
+import { DoubleRightOutlined } from "@ant-design/icons/";
 import socket from "../../Socket";
+import { Col, Row } from "reactstrap";
+import { Button } from "antd";
 
 const ChatPanel = () => {
   const closehistory = () => {
     document.querySelector(".history").classList.remove("show");
   };
-
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState();
+  const sendMessage = () => {
+    if (message) {
+      socket.emit("chatMessage", message);
+      setMessage("");
+    }
+  };
   useEffect(() => {
     // if (username && room) {
     //   setUsername(username);
     //   setRoom(room);
     //   joinRoom(username, room);
     // }
-    // socket.on("message", (message) => {
-    //   setMessages((msgs) => [...msgs, message]);
-    // });
-    // return () => {
-    //   socket.off("message");
-    // };
+    socket.on("message", (message) => {
+      setMessages((msgs) => [...msgs, message]);
+    });
+    return () => {
+      socket.off("message");
+    };
   }, []);
   return (
     <Fragment>
       <div id="right-history" className="history">
         <div className="modal-header p-l-20 p-r-20">
           <H6 attrH6={{ className: "modal-title w-100" }}>
-            {ContactHistory}
+            Group Chat
             <span className="pull-right">
               <a
                 className="closehistory"
@@ -38,7 +48,7 @@ const ChatPanel = () => {
             </span>
           </H6>
         </div>
-        <div className="history-details">
+        {/*   <div className="history-details">
           <div className="text-center">
             <i className="icofont icofont-ui-edit"></i>
             <P>{"Contact has not been modified yet."}</P>
@@ -53,7 +63,7 @@ const ChatPanel = () => {
               <span className="f-12">{"Sep 10, 2022 4:00"}</span>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* {!joined ? (
           <div>
             <input
@@ -70,24 +80,40 @@ const ChatPanel = () => {
             />
             <button onClick={handleJoin}>Join Room</button>
           </div>
-        ) : (
-          <div>
-            <div>
-              {messages.map((msg, index) => (
-                <div key={index}>
+        ) : ( */}
+        <div>
+          <div style={{ height: "700px", overflowY: "scroll" }}>
+            <br></br>
+            {messages &&
+              messages.map((msg, index) => (
+                <div key={index} style={{ paddingLeft: "3px" }}>
                   <strong>{msg.user}</strong>: {msg.text}
                 </div>
               ))}
-            </div>
-            <input
-              type="text"
-              placeholder="Message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <button onClick={sendMessage}>Send Message</button>
           </div>
-        )} */}
+          <br></br>
+          <Row>
+            <Col md={9}>
+              <input
+                type="text"
+                placeholder="Message"
+                className="form-control"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </Col>
+            <Col>
+              <Button
+                onClick={() => {
+                  sendMessage();
+                }}
+              >
+                <DoubleRightOutlined />
+              </Button>
+            </Col>
+          </Row>
+        </div>
+        {/* )} */}
       </div>
     </Fragment>
   );

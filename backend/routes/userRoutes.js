@@ -2,15 +2,29 @@ const router = require("express").Router();
 let User = require("../models/userModel");
 
 //Get All Users
-// router.route("/").get((req, res) => {
-//   User.find()
-//     .then((user) => {
-//       res.json(user);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
+router.get("/", async (req, res) => {
+  try {
+    await User.find()
+      .then((user) => {
+        res.json({
+          msg: "Successful !",
+          code: 1,
+          data: user,
+        });
+        res.json(user);
+      })
+      .catch((err) => {
+        res.json({
+          msg: err,
+          code: 0,
+          data: [],
+        });
+        //console.log(err);
+      });
+  } catch (error) {
+    // console.log(error);
+  }
+});
 
 //Get All Users
 // router.post("/search",get((req, res) => {

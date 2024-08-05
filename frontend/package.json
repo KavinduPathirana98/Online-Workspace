@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://react.pixelstrap.com/cuba-context/",
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@asseinfo/react-kanban": "^2.2.0",
     "@auth0/auth0-react": "^1.9.0",
     "@fullcalendar/core": "4.0.2",

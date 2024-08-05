@@ -5,8 +5,12 @@ import { SampleCard } from "../../../Constant";
 import NotePad from "../notepad";
 import WhiteBoard from "../whiteboard";
 const Sample = () => {
+  let notepadMatrix = [];
+  let imageMatrix = [];
+
   const [ui, setUi] = useState([]);
-  //let ui = [];
+  // let ui = [];
+
   const onc = (v) => {
     console.log(v);
     let x = ui;
@@ -16,6 +20,7 @@ const Sample = () => {
     } else if (v == 2) {
       const newItem = <WhiteBoard />;
       setUi([...ui, newItem]);
+    } else if (v == 3) {
     }
 
     console.log(ui);
@@ -30,6 +35,14 @@ const Sample = () => {
         }}
       >
         notebook
+      </button>
+      <button
+        className="btn btn-primary"
+        onClick={() => {
+          onc(2);
+        }}
+      >
+        draw
       </button>
       <button
         className="btn btn-primary"
