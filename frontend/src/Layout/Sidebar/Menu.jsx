@@ -36,6 +36,12 @@ export const MENUITEMS = [
         children: [
           {
             active: false,
+            path: `${process.env.PUBLIC_URL}/pages/workspace`,
+            title: "Workspace",
+            type: "link",
+          },
+          {
+            active: false,
             path: `${process.env.PUBLIC_URL}/pages/white-board`,
             title: "White Board",
             type: "link",

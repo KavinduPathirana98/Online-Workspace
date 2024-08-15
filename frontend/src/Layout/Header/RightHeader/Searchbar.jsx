@@ -17,7 +17,7 @@ const Searchbar = ({ onclick }) => {
   return (
     <li>
       <span className="header-search">
-        <SvgIcon iconId="customers" onClick={() => onclick()} />
+        <SvgIcon iconId="stroke-chat" onClick={() => onclick()} />
       </span>
     </li>
   );

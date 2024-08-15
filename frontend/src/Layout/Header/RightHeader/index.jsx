@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 
 import Language from "./Language";
 import Searchbar from "./Searchbar";
@@ -10,13 +10,22 @@ import UserHeader from "./UserHeader";
 import { UL } from "../../../AbstractElements";
 import { Col } from "reactstrap";
 import ChatPanel from "../../../Components/Pages/chat";
+import JitsiMeetingComponent from "../../../Components/Pages/Meet";
 
 const RightHeader = () => {
   const openChat = () => {
     document.querySelector(".history").classList.add("show");
   };
+  const [meetingStarted, setMeetingStarted] = useState(false);
+  const startMeeting = () => {
+    setMeetingStarted(true);
+  };
   return (
     <Fragment>
+      <JitsiMeetingComponent
+        meetingStarted={meetingStarted}
+        setMeetingStarted={setMeetingStarted}
+      />
       <Col
         xxl="7"
         xl="6"
@@ -29,8 +38,8 @@ const RightHeader = () => {
           {/* <Language />*/}
           <Searchbar onclick={openChat} />
           {/* <BookmarkHeader /> */}
-          <MoonLight />
-          {/* <CartHeader /> */}
+          <MoonLight onclick={openChat} />
+          <CartHeader onclick={startMeeting} />
           {/* <Notificationbar /> */}
           <UserHeader />
         </UL>
