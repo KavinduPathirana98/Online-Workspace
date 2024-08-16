@@ -1,6 +1,7 @@
 import { Button, Form, Input, Select } from "antd";
 import { TeamOutlined } from "@ant-design/icons";
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import {
   CardBody,
   FormGroup,
@@ -17,7 +18,7 @@ import socket from "../../../Socket";
 import axios from "axios";
 import { Breadcrumbs, Btn, H3, LI, UL } from "../../../../AbstractElements";
 import moment from "moment";
-
+toast.configure();
 const Home = () => {
   const [modal, setModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
@@ -64,6 +65,30 @@ const Home = () => {
       }
     });
   };
+  const deleteRoom = async (roomID) => {
+    //setLoading(true);
+    try {
+      // Send DELETE request to delete the room by roomID
+      await axios
+        .delete(`${socket_api}api/room/delete/${roomID}`)
+        .then((response) => {
+          if (response.data.code === 1) {
+            toast.success("Room successfully deleted!");
+            // Refresh rooms after successful deletion
+            getAllWorkspaces();
+          } else {
+            toast.warn("Failed to delete the room.");
+          }
+        })
+        .catch((error) => {
+          toast.error("Error occurred while deleting the room.");
+        });
+    } catch (err) {
+      toast.error("Unexpected error occurred.");
+    } finally {
+      //setLoading(false);
+    }
+  };
 
   const getAllWorkspaces = async () => {
     let model = { userID: userID };
@@ -105,6 +130,14 @@ const Home = () => {
     const y = e.clientY;
     socket.emit("down", { x, y, email: Username });
   };
+  const [formUsers] = Form.useForm();
+  const [currentUpdateRoom, setCurrentUpdateRoom] = useState("");
+
+  const updateMembers = () => {};
+  const deleteRoomCallBack = () => {
+    console.log(currentUpdateRoom);
+    deleteRoom(currentUpdateRoom);
+  };
   useEffect(() => {
     socket.on("ondown", (data) => {
       setMousePositions((prevPositions) => ({
@@ -117,8 +150,9 @@ const Home = () => {
       socket.off("ondown");
     };
   }, []);
-  const toggleSettings = () => {
+  const toggleSettings = (roomID) => {
     setSettingsModal(!settingsModal);
+    setCurrentUpdateRoom(roomID);
   };
   useEffect(() => {
     getAllWorkspaces();
@@ -287,7 +321,11 @@ const Home = () => {
             <Button type="primary" color="primary">
               Update Members
             </Button>
-            <Button type="primary" color="primary">
+            <Button
+              type="primary"
+              color="primary"
+              onClick={() => deleteRoomCallBack()}
+            >
               Delete Room
             </Button>
           </ModalFooter>
@@ -302,7 +340,12 @@ const Home = () => {
                     <Row>
                       <Col md={8}></Col>
                       <Col md={3}>
-                        <Button title="settings" onClick={toggleSettings}>
+                        <Button
+                          title="settings"
+                          onClick={() => {
+                            toggleSettings(item.roomID);
+                          }}
+                        >
                           <TeamOutlined />
                         </Button>
                       </Col>
