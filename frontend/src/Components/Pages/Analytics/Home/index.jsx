@@ -107,6 +107,7 @@ const Home = () => {
     if (Username && roomID) {
       socket.emit("joinRoom", { username: Username, room: roomID });
       setJoined(true);
+      localStorage.setItem("room", roomID);
       socketRef.current = socket;
     }
   };

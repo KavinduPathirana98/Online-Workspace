@@ -1,6 +1,21 @@
 const router = require("express").Router();
 let Room = require("../models/roomModel");
 // Update users in a room by roomID
+// Multer configuration for file uploads
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage });
+// Define the upload folder path
+
 router.put("/update-users/:roomID", async (req, res) => {
   try {
     const { roomID } = req.params;
@@ -78,6 +93,10 @@ router.post("/create", async (req, res) => {
         data: [{ roomID: roomID }],
       });
     } else {
+      const uploadFolder = path.join(__dirname, "../uploads/" + roomID);
+      if (!fs.existsSync(uploadFolder)) {
+        fs.mkdirSync(uploadFolder, { recursive: true });
+      }
       const response = await Room.create({
         roomName,
         roomID,

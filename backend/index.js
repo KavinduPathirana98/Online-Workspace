@@ -46,9 +46,9 @@ const upload = multer({ storage });
 let connections = [];
 
 // Function to get file names in the uploads folder
-const getFileNames = () => {
+const getFileNames = (id) => {
   return new Promise((resolve, reject) => {
-    fs.readdir("uploads/", (err, files) => {
+    fs.readdir("uploads/" + id, (err, files) => {
       if (err) {
         reject(err);
       } else {
@@ -60,9 +60,9 @@ const getFileNames = () => {
 };
 //Socket Functions
 // Function to emit file names to all connected clients
-const emitFileNames = async () => {
+const emitFileNames = async (id) => {
   try {
-    const files = await getFileNames();
+    const files = await getFileNames(id);
     connections.forEach((socket) => {
       socket.emit("fileList", files);
     });
@@ -70,7 +70,7 @@ const emitFileNames = async () => {
     console.error("Error getting file names:", error);
   }
 };
-
+let blocks = [];
 // Socket.IO connection handling
 io.on("connect", (socket) => {
   connections.push(socket);
@@ -78,19 +78,24 @@ io.on("connect", (socket) => {
   console.log(`${socket.id} has connected`);
 
   // Send initial file list on connection
-  emitFileNames();
+  //emitFileNames();
 
-  socket.on("joinRoom", ({ username, room }) => {
-    socket.username = username;
-    socket.room = room;
-    console.log(room);
-    socket.join(room);
-    socket.to(socket.room).emit("message", {
-      user: socket.username,
-      text: `${username} has joined!`,
+  //blocks
+
+  // Send existing blocks to the newly connected client
+  //socket.emit("initial", { blocks });
+
+  socket.on("block", (block) => {
+    blocks.push(block);
+    connections.forEach((con) => {
+      if (con.id !== socket.id) {
+        con.emit("block", blocks);
+      }
     });
-  });
 
+    // Broadcast the new block to all clients
+    //socket.emit("newBlock", block);
+  });
   //to emit updates from notepad
   socket.on("text", (data) => {
     // Broadcast text data to all connected clients except the sender
@@ -98,6 +103,17 @@ io.on("connect", (socket) => {
       if (con.id !== socket.id) {
         con.emit("text", data);
       }
+    });
+  });
+  socket.on("joinRoom", ({ username, room }) => {
+    socket.username = username;
+    socket.room = room;
+
+    socket.join(room);
+    emitFileNames(room);
+    socket.to(socket.room).emit("message", {
+      user: socket.username,
+      text: `${username} has joined!`,
     });
   });
 

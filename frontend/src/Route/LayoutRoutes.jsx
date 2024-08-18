@@ -24,7 +24,7 @@ const LayoutRoutes = () => {
     // const socket = io(server, connectionOptions);
 
     //setSocket(socket);
-
+    const room = localStorage.getItem("room");
     socket.on("connect", () => {
       console.log("Connected to socket.io server!");
     });

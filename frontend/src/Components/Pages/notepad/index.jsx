@@ -1,6 +1,7 @@
 import { useState } from "react";
+import socket from "../../Socket";
 
-const NotePad = ({ socket, inx, setInx }) => {
+const NotePad = ({ inx, setInx }) => {
   //   const [inx, setInx] = useState("");
 
   const updateText = (text) => {

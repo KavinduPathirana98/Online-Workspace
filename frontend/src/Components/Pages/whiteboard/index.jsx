@@ -1,7 +1,5 @@
-import { SelectOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
 import { useEffect, useLayoutEffect, useState } from "react";
-import io from "socket.io-client";
 import rough from "roughjs/bundled/rough.esm.js";
 import socket from "../../Socket";
 
@@ -11,6 +9,9 @@ const WhiteBoard = ({ elements, setElements }) => {
   const [action, setAction] = useState("none");
   const [tool, setTool] = useState("line");
   const [selectedElement, setSelectedElement] = useState(null);
+  const [points, setPoints] = useState([]); // For pencil tool
+  const [polygonPoints, setPolygonPoints] = useState([]); // For polygon tool
+  const [undoStack, setUndoStack] = useState([]);
 
   useEffect(() => {
     // Socket setup (if needed)
@@ -30,17 +31,43 @@ const WhiteBoard = ({ elements, setElements }) => {
     }
   }, [elements]);
 
-  const createElement = (id, x1, y1, x2, y2, elementType) => {
+  const createElement = (id, x1, y1, x2, y2, elementType, points = []) => {
     let roughElement;
-    if (elementType === "line") {
-      roughElement = generator.line(x1, y1, x2, y2);
-    } else if (elementType === "rect") {
-      roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1);
-    } else if (elementType === "cir") {
-      roughElement = generator.circle(x1, y1, Math.abs(x2 - x1));
+    switch (elementType) {
+      case "line":
+        roughElement = generator.line(x1, y1, x2, y2);
+        break;
+      case "rect":
+        roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1);
+        break;
+      case "circle":
+        roughElement = generator.circle(x1, y1, Math.abs(x2 - x1));
+        break;
+      case "triangle":
+        roughElement = generator.polygon([
+          [x1, y2],
+          [(x1 + x2) / 2, y1],
+          [x2, y2],
+        ]);
+        break;
+      case "ellipse":
+        roughElement = generator.ellipse(
+          x1,
+          y1,
+          Math.abs(x2 - x1),
+          Math.abs(y2 - y1)
+        );
+        break;
+      case "polygon":
+        roughElement = generator.polygon(points);
+        break;
+      case "pencil":
+        roughElement = generator.linearPath(points);
+        break;
+      default:
+        break;
     }
-
-    return { id, elementType, x1, y1, x2, y2, roughElement };
+    return { id, elementType, x1, y1, x2, y2, roughElement, points };
   };
 
   const distance = (a, b) =>
@@ -84,6 +111,16 @@ const WhiteBoard = ({ elements, setElements }) => {
         setSelectedElement({ ...element, offsetX, offsetY });
         setAction("moving");
       }
+    } else if (tool === "pencil") {
+      setAction("drawing");
+      setPoints([{ x, y }]);
+      const id = elements.length;
+      const element = createElement(id, x, y, x, y, tool, [{ x, y }]);
+      setElements((prevState) => [...prevState, element]);
+    } else if (tool === "polygon") {
+      setPolygonPoints([...polygonPoints, [x, y]]);
+    } else if (tool === "eraser") {
+      setAction("erasing");
     } else {
       const id = elements.length;
       const element = createElement(id, x, y, x, y, tool);
@@ -92,8 +129,8 @@ const WhiteBoard = ({ elements, setElements }) => {
     }
   };
 
-  const updateElement = (id, x1, y1, x2, y2, tool) => {
-    const updatedElement = createElement(id, x1, y1, x2, y2, tool);
+  const updateElement = (id, x1, y1, x2, y2, tool, points = []) => {
+    const updatedElement = createElement(id, x1, y1, x2, y2, tool, points);
     const elementsCopy = [...elements];
     elementsCopy[id] = updatedElement;
     setElements(elementsCopy);
@@ -110,9 +147,16 @@ const WhiteBoard = ({ elements, setElements }) => {
     }
 
     if (action === "drawing") {
-      const index = elements.length - 1;
-      const { x1, y1 } = elements[index];
-      updateElement(index, x1, y1, x, y, tool);
+      if (tool === "pencil") {
+        const newPoints = [...points, { x, y }];
+        setPoints(newPoints);
+        const index = elements.length - 1;
+        updateElement(index, 0, 0, 0, 0, tool, newPoints);
+      } else {
+        const index = elements.length - 1;
+        const { x1, y1 } = elements[index];
+        updateElement(index, x1, y1, x, y, tool);
+      }
     } else if (action === "moving") {
       const { id, x1, x2, y1, y2, elementType, offsetX, offsetY } =
         selectedElement;
@@ -121,13 +165,54 @@ const WhiteBoard = ({ elements, setElements }) => {
       const newX = x - offsetX;
       const newY = y - offsetY;
       updateElement(id, newX, newY, newX + width, newY + height, elementType);
+    } else if (action === "erasing") {
+      const radius = 10; // Eraser radius
+      const newElements = elements.filter((element) => {
+        const { x1, y1, x2, y2 } = element;
+        const isWithinRadius = (x, y, x1, y1, x2, y2) => {
+          // Simple bounding box check
+          return (
+            x >= Math.min(x1, x2) - radius &&
+            x <= Math.max(x1, x2) + radius &&
+            y >= Math.min(y1, y2) - radius &&
+            y <= Math.max(y1, y2) + radius
+          );
+        };
+        return !isWithinRadius(x, y, x1, y1, x2, y2);
+      });
+      setElements(newElements);
+      socket.emit("elements", newElements);
     }
   };
 
   const handleMouseUp = () => {
+    if (tool === "polygon") {
+      if (polygonPoints.length > 2) {
+        const id = elements.length;
+        const element = createElement(id, 0, 0, 0, 0, "polygon", polygonPoints);
+        setElements((prevState) => [...prevState, element]);
+        setPolygonPoints([]); // Reset the points after drawing
+      }
+    }
     setAction("none");
     setSelectedElement(null);
   };
+
+  const undo = () => {
+    if (undoStack.length === 0) return;
+    const previousElements = undoStack.pop();
+    setElements(previousElements);
+    socket.emit("elements", previousElements);
+  };
+
+  const pushUndoStack = (elements) => {
+    setUndoStack((prevStack) => [...prevStack, [...elements]]);
+  };
+
+  useEffect(() => {
+    // Push current elements to undo stack whenever elements change
+    pushUndoStack(elements);
+  }, [elements]);
 
   return (
     <div className="container">
@@ -166,14 +251,69 @@ const WhiteBoard = ({ elements, setElements }) => {
             </Col>
             <Col>
               <Button
-                id="cir"
+                id="circle"
                 name="tool"
                 className="mt-1"
-                onClick={() => setTool("cir")}
+                onClick={() => setTool("circle")}
               >
                 Circle
               </Button>
             </Col>
+            <Col>
+              <Button
+                id="triangle"
+                name="tool"
+                className="mt-1"
+                onClick={() => setTool("triangle")}
+              >
+                Triangle
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                id="ellipse"
+                name="tool"
+                className="mt-1"
+                onClick={() => setTool("ellipse")}
+              >
+                Ellipse
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                id="pencil"
+                name="tool"
+                className="mt-1"
+                onClick={() => setTool("pencil")}
+              >
+                Pencil
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                id="polygon"
+                name="tool"
+                className="mt-1"
+                onClick={() => setTool("polygon")}
+              >
+                Polygon
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                id="eraser"
+                name="tool"
+                className="mt-1"
+                onClick={() => setTool("eraser")}
+              >
+                Eraser
+              </Button>
+            </Col>
+            {/* <Col>
+              <Button id="undo" name="tool" className="mt-1" onClick={undo}>
+                Undo
+              </Button>
+            </Col> */}
           </Row>
         </Col>
       </Row>
