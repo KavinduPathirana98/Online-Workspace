@@ -217,7 +217,7 @@ const WhiteBoard = ({ elements, setElements }) => {
   return (
     <div className="container">
       <Row>
-        <Col md={12}>
+        <Col md={24}>
           <Row>
             <Col>
               <Button

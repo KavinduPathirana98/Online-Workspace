@@ -94,7 +94,6 @@ const LoginTab = ({ selected }) => {
   return (
     <Fragment>
       <Form className="theme-form">
-        {localStorage.getItem("authenticated")}
         <H4>
           {selected === "simpleLogin"
             ? "Sign In With Simple Login"
@@ -160,7 +159,7 @@ const LoginTab = ({ selected }) => {
             </Btn>
           )}
         </div>
-        {/* <OtherWay /> */}
+        <OtherWay />
       </Form>
     </Fragment>
   );

@@ -1,12 +1,12 @@
-import React from 'react';
-import { Facebook, Linkedin, Twitter } from 'react-feather';
-import { Link } from 'react-router-dom';
-import { H6, P } from '../../../AbstractElements';
+import React from "react";
+import { Facebook, Linkedin, Twitter } from "react-feather";
+import { Link } from "react-router-dom";
+import { H6, P } from "../../../AbstractElements";
 
 const OtherWay = () => {
   return (
     <>
-      <div className='login-social-title'>
+      {/* <div className='login-social-title'>
         <H6 attrH6={{ className: 'text-muted or mt-4' }}>Or Sign up with</H6>
       </div>
       <div className='social my-4 '>
@@ -23,10 +23,11 @@ const OtherWay = () => {
             facebook
           </a>
         </div>
-      </div>
-      <P attrPara={{ className: 'text-center mb-0 ' }}>
+      </div> */}
+      <br></br>
+      <P attrPara={{ className: "text-center mb-0 " }}>
         Don't have account?
-        <Link className='ms-2' to={`${process.env.PUBLIC_URL}/pages/authentication/register-simple`}>
+        <Link className="ms-2" to={`${process.env.PUBLIC_URL}/register-simple`}>
           Create Account
         </Link>
       </P>

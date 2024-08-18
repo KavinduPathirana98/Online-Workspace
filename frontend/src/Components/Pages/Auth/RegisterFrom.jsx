@@ -189,10 +189,7 @@ const RegisterFrom = ({ logoClassMain }) => {
               </div> */}
               <P attrPara={{ className: "mb-0 text-start" }}>
                 Already have an account?
-                <Link
-                  className="ms-2"
-                  to={`${process.env.PUBLIC_URL}/pages/authentication/login-simple`}
-                >
+                <Link className="ms-2" to={`${process.env.PUBLIC_URL}/login`}>
                   Sign in
                 </Link>
               </P>

@@ -77,25 +77,17 @@ io.on("connect", (socket) => {
 
   console.log(`${socket.id} has connected`);
 
-  // Send initial file list on connection
-  //emitFileNames();
-
-  //blocks
-
-  // Send existing blocks to the newly connected client
-  //socket.emit("initial", { blocks });
-
+  //update blocks
   socket.on("block", (block) => {
     blocks.push(block);
+    //broadcast to all users
     connections.forEach((con) => {
       if (con.id !== socket.id) {
         con.emit("block", blocks);
       }
     });
-
-    // Broadcast the new block to all clients
-    //socket.emit("newBlock", block);
   });
+
   //to emit updates from notepad
   socket.on("text", (data) => {
     // Broadcast text data to all connected clients except the sender
@@ -105,6 +97,8 @@ io.on("connect", (socket) => {
       }
     });
   });
+
+  //join room
   socket.on("joinRoom", ({ username, room }) => {
     socket.username = username;
     socket.room = room;
@@ -126,6 +120,7 @@ io.on("connect", (socket) => {
       }
     });
   });
+
   //mouse movement
   socket.on("down", (data) => {
     // Broadcast "down" event to all connected clients except the sender
@@ -135,12 +130,15 @@ io.on("connect", (socket) => {
       }
     });
   });
+
+  //to emit chat messages
   socket.on("chatMessage", (message) => {
     io.to(socket.room).emit("message", {
       user: socket.username,
       text: message,
     });
   });
+  //user joined message (calling option)
   socket.on("sendingSignal", (payload) => {
     io.to(payload.userToSignal).emit("userJoined", {
       signal: payload.signal,
