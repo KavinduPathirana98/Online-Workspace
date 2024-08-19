@@ -31,14 +31,17 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
   const handleUpload = async () => {
     const formData = new FormData();
     formData.append("file", selectedFile);
-    formData.append("roomID", localStorage.getItem("room"));
 
     try {
-      await axios.post(socket_api + "upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        socket_api + "upload/" + localStorage.getItem("room"),
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       alert("File uploaded successfully");
     } catch (error) {
       console.error("Error uploading file:", error);

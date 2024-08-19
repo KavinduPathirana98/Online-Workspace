@@ -34,7 +34,10 @@ const io = new Server(httpServer, {
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    // Get the directory from the URL parameter
+    const dynamicDir = req.params.dir;
+
+    cb(null, "uploads/" + dynamicDir);
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -157,12 +160,13 @@ io.on("connect", (socket) => {
 //End Points
 
 // File upload endpoint
-app.post("/upload", upload.single("file"), (req, res) => {
+app.post("/upload/:dir", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
   }
+  const dynamicDir = req.params.dir;
   // After file upload, emit updated file list to all connected clients
-  emitFileNames();
+  emitFileNames(dynamicDir);
   res.status(200).json({ message: "File uploaded successfully" });
 });
 
