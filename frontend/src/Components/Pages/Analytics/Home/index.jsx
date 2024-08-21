@@ -44,14 +44,26 @@ const Home = () => {
         roomPassword: values.password,
         users: [],
       };
-      await axios.post(socket_api + "api/room/create", model);
+      await axios
+        .post(socket_api + "api/room/create", model)
+        .then((response) => {
+          if (response.data.code == 1) {
+            toast.success("Successfully created workspace group");
+          } else {
+            toast.success("Error while creating.Please try again.");
+          }
+          setModal(false);
+          getAllWorkspaces();
+        });
     } catch (err) {
+      toast.success("Error while creating.Please try again.");
       console.error(err);
+      setModal(false);
     }
   };
 
   const [allUsers, setAllUsers] = useState([]);
-
+  //get all users for add into group
   const getallUsers = async () => {
     await axios.get(socket_api + "api/user/", {}).then((response) => {
       if (response.data.code === 1) {
@@ -65,6 +77,28 @@ const Home = () => {
       }
     });
   };
+  //update group users function
+  const updateGroupUsers = async () => {
+    try {
+      const formData = await formSettings.validateFields();
+      console.log(formData);
+      axios
+        .put(
+          socket_api + "api/room/update-users/" + currentUpdateRoom,
+          formData
+        )
+        .then((response) => {
+          if (response.data.code == 1) {
+            toast.success("Successfully updated group members");
+          } else {
+            toast.error("Error while updating group members");
+          }
+        });
+    } catch (err) {
+      toast.error("Error while updating group members");
+    }
+  };
+  //delete room function
   const deleteRoom = async (roomID) => {
     //setLoading(true);
     try {
@@ -72,6 +106,7 @@ const Home = () => {
       await axios
         .delete(`${socket_api}api/room/delete/${roomID}`)
         .then((response) => {
+          console.log(response);
           if (response.data.code === 1) {
             toast.success("Room successfully deleted!");
             // Refresh rooms after successful deletion
@@ -79,14 +114,16 @@ const Home = () => {
           } else {
             toast.warn("Failed to delete the room.");
           }
+          setSettingsModal(false);
         })
         .catch((error) => {
+          console.log(error);
           toast.error("Error occurred while deleting the room.");
+          setSettingsModal(false);
         });
     } catch (err) {
+      console.log(err);
       toast.error("Unexpected error occurred.");
-    } finally {
-      //setLoading(false);
     }
   };
 
@@ -134,7 +171,6 @@ const Home = () => {
   const [formUsers] = Form.useForm();
   const [currentUpdateRoom, setCurrentUpdateRoom] = useState("");
 
-  const updateMembers = () => {};
   const deleteRoomCallBack = () => {
     console.log(currentUpdateRoom);
     deleteRoom(currentUpdateRoom);
@@ -151,9 +187,14 @@ const Home = () => {
       socket.off("ondown");
     };
   }, []);
+
   const toggleSettings = (roomID) => {
+    formSettings.setFieldValue("users", "");
     setSettingsModal(!settingsModal);
     setCurrentUpdateRoom(roomID);
+    const filteredUsers = myRooms.filter((item) => item._id === roomID).users;
+    console.log(filteredUsers);
+    formSettings.setFieldValue("users", filteredUsers);
   };
   useEffect(() => {
     getAllWorkspaces();
@@ -319,7 +360,13 @@ const Home = () => {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button type="primary" color="primary">
+            <Button
+              type="primary"
+              color="primary"
+              onClick={() => {
+                updateGroupUsers();
+              }}
+            >
               Update Members
             </Button>
             <Button
@@ -336,7 +383,7 @@ const Home = () => {
             {myRooms.map((item) => (
               <Col lg="3" md="6" key={item.roomID}>
                 <div className="pricingtable">
-                  {item.createdUser ===
+                  {item.createdUser._id ===
                   JSON.parse(localStorage.getItem("userAuth"))._id ? (
                     <Row>
                       <Col md={8}></Col>

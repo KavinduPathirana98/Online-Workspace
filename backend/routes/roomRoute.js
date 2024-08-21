@@ -156,29 +156,12 @@ router.post("/create", async (req, res) => {
 router.post("/search", async (req, res) => {
   try {
     const { userID } = req.body;
-    let rooms = [];
-    const created = await Room.find({ createdUser: userID })
-      .then((rooms) => {
-        return rooms;
-        //  res.json(rooms);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
-    const belongs = await Room.find({ users: { $in: [userID] } }).populate(
-      "users",
-      "username email"
-    );
-    created &&
-      created.map((item) => {
-        rooms.push(item);
-      });
-    belongs &&
-      belongs.map((item) => {
-        rooms.push(item);
-      });
-
+    // Find rooms where the user is either the creator or inside the room
+    const rooms = await Room.find({
+      $or: [{ createdUser: userID }, { users: [userID] }],
+    }).populate("createdUser", " User"); // Populating user details
+    console.log(rooms);
     res
       .json({
         msg: "Successfully",
