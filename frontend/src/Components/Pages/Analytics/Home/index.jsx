@@ -18,6 +18,7 @@ import socket from "../../../Socket";
 import axios from "axios";
 import { Breadcrumbs, Btn, H3, LI, UL } from "../../../../AbstractElements";
 import moment from "moment";
+import swal from "sweetalert2";
 toast.configure();
 const Home = () => {
   const [modal, setModal] = useState(false);
@@ -146,6 +147,23 @@ const Home = () => {
       setJoined(true);
       localStorage.setItem("room", roomID);
       socketRef.current = socket;
+      swal
+        .fire({
+          title: "Are you sure?",
+          text: "You will  be joined to selected group !",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, join !",
+          cancelButtonText: "No, keep it",
+        })
+        .then(
+          function () {},
+          function (dismiss) {
+            // dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'
+            if (dismiss === "cancel") {
+            }
+          }
+        );
     }
   };
 
