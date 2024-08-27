@@ -97,6 +97,9 @@ router.post("/create", async (req, res) => {
       if (!fs.existsSync(uploadFolder)) {
         fs.mkdirSync(uploadFolder, { recursive: true });
       }
+      if (!fs.existsSync(uploadFolder + "/temp")) {
+        fs.mkdirSync(uploadFolder + "/temp", { recursive: true });
+      }
       const response = await Room.create({
         roomName,
         roomID,
@@ -152,32 +155,30 @@ router.post("/create", async (req, res) => {
     res.json({ msg: err, code: 0, data: [] }).send();
   }
 });
-//Get All Rooms belongs
+//find all rooms
 router.post("/search", async (req, res) => {
   try {
     const { userID } = req.body;
 
     // Find rooms where the user is either the creator or inside the room
     const rooms = await Room.find({
-      $or: [{ createdUser: userID }, { users: [userID] }],
-    }).populate("createdUser", " User"); // Populating user details
+      $or: [{ createdUser: userID }, { users: { $in: [userID] } }],
+    }).populate("createdUser users", "-password -__v"); // Populating user details without sensitive information
+
     console.log(rooms);
-    res
-      .json({
-        msg: "Successfully",
-        code: 1,
-        data: [rooms],
-      })
-      .send();
+
+    res.json({
+      msg: "Successfully retrieved rooms",
+      code: 1,
+      data: rooms, // Send the array of rooms directly
+    });
   } catch (err) {
     console.error("Error finding rooms:", err);
-    res
-      .json({
-        msg: "Error",
-        code: 0,
-        data: [{ err }],
-      })
-      .send();
+    res.status(500).json({
+      msg: "Error retrieving rooms",
+      code: 0,
+      error: err.message,
+    });
   }
 });
 module.exports = router;

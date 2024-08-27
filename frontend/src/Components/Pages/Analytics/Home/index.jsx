@@ -134,8 +134,7 @@ const Home = () => {
       .post(socket_api + "api/room/search", model)
       .then((response) => {
         if (response.data.code === 1) {
-          console.log(response.data.data[0]);
-          setMyRooms(response.data.data[0]);
+          setMyRooms(response.data.data);
         }
       })
       .catch((error) => console.error(error));
@@ -143,10 +142,6 @@ const Home = () => {
 
   const joinRoom = (roomID) => {
     if (Username && roomID) {
-      socket.emit("joinRoom", { username: Username, room: roomID });
-      setJoined(true);
-      localStorage.setItem("room", roomID);
-      socketRef.current = socket;
       swal
         .fire({
           title: "Are you sure?",
@@ -157,7 +152,12 @@ const Home = () => {
           cancelButtonText: "No, keep it",
         })
         .then(
-          function () {},
+          function () {
+            socket.emit("joinRoom", { username: Username, room: roomID });
+            setJoined(true);
+            localStorage.setItem("room", roomID);
+            socketRef.current = socket;
+          },
           function (dismiss) {
             // dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'
             if (dismiss === "cancel") {
@@ -398,63 +398,64 @@ const Home = () => {
         </Modal>
         <CardBody>
           <Row className="pricing-block">
-            {myRooms.map((item) => (
-              <Col lg="3" md="6" key={item.roomID}>
-                <div className="pricingtable">
-                  {item.createdUser._id ===
-                  JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                    <Row>
-                      <Col md={8}></Col>
-                      <Col md={3}>
-                        <Button
-                          title="settings"
-                          onClick={() => {
-                            toggleSettings(item.roomID);
-                          }}
-                        >
-                          <TeamOutlined />
-                        </Button>
-                      </Col>
-                    </Row>
-                  ) : (
-                    ""
-                  )}
+            {myRooms &&
+              myRooms.map((item) => (
+                <Col lg="3" md="6" key={item.roomID}>
+                  <div className="pricingtable">
+                    {item.createdUser._id ===
+                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                      <Row>
+                        <Col md={8}></Col>
+                        <Col md={3}>
+                          <Button
+                            title="settings"
+                            onClick={() => {
+                              toggleSettings(item.roomID);
+                            }}
+                          >
+                            <TeamOutlined />
+                          </Button>
+                        </Col>
+                      </Row>
+                    ) : (
+                      ""
+                    )}
 
-                  <div className="pricingtable-header">
-                    <H3 attrH3={{ className: "title" }}>{item.roomName}</H3>
-                  </div>
-                  <div className="price-value">
-                    {/* <span className="currency">$</span>
+                    <div className="pricingtable-header">
+                      <H3 attrH3={{ className: "title" }}>{item.roomName}</H3>
+                    </div>
+                    <div className="price-value">
+                      {/* <span className="currency">$</span>
                     <span className="amount">10</span>
                     <span className="duration">/mo</span> */}
-                  </div>
-                  <UL attrUL={{ className: " flex-row" }}>
-                    <LI attrLI={{ className: "border-0" }}>
-                      {"Workspace ID :" + item.roomID}
-                    </LI>
-                    {/* <LI attrLI={{ className: "border-0" }}>
+                    </div>
+                    <UL attrUL={{ className: " flex-row" }}>
+                      <LI attrLI={{ className: "border-0" }}>
+                        {"Workspace ID :" + item.roomID}
+                      </LI>
+                      {/* <LI attrLI={{ className: "border-0" }}>
                       {"50 Email Accounts"}
                     </LI>
                     <LI attrLI={{ className: "border-0" }}>{"Maintenance"}</LI> */}
-                    <LI attrLI={{ className: "border-0" }}>
-                      {"Created Date : " +
-                        moment(item.CreatedOn).format("YYYY-MMM")}
-                    </LI>
-                  </UL>
-                  <div className="pricingtable-signup">
-                    <Btn
-                      attrBtn={{
-                        color: "primary",
-                        size: "lg",
-                        onClick: () => joinRoom(item.roomID),
-                      }}
-                    >
-                      Join
-                    </Btn>
+                      <LI attrLI={{ className: "border-0" }}>
+                        {"Created Date : " +
+                          moment(item.CreatedOn).format("YYYY-MMM")}
+                      </LI>
+                    </UL>
+                    <div className="pricingtable-signup">
+                      <Btn
+                        attrBtn={{
+                          color: "primary",
+                          size: "lg",
+                          onClick: () => joinRoom(item.roomID),
+                        }}
+                      >
+                        Join
+                      </Btn>
+                    </div>
                   </div>
-                </div>
-              </Col>
-            ))}
+                </Col>
+              ))}
           </Row>
         </CardBody>
       </div>
