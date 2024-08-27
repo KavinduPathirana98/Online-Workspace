@@ -130,6 +130,10 @@ const Workspace = () => {
     socket.send(JSON.stringify(updatedComponent));
   };
 
+  const selectItem = (item) => {
+    setBlockType(item);
+    setModal(false);
+  };
   return (
     <Fragment>
       <Button type="primary" onClick={() => setModal(true)}>
@@ -149,6 +153,9 @@ const Workspace = () => {
             marginBottom: "10px",
             borderRadius: "5px",
           }}
+          onClick={() => {
+            selectItem("notepad");
+          }}
         >
           <Col span={4}>
             <FileOutlined style={{ fontSize: "24px" }} />
@@ -164,6 +171,9 @@ const Workspace = () => {
             border: "1px solid black",
             marginBottom: "10px",
             borderRadius: "5px",
+          }}
+          onClick={() => {
+            selectItem("image");
           }}
         >
           <Col span={4}>
@@ -181,6 +191,9 @@ const Workspace = () => {
             marginBottom: "10px",
             borderRadius: "5px",
           }}
+          onClick={() => {
+            selectItem("whiteboard");
+          }}
         >
           <Col span={4}>
             <EditOutlined style={{ fontSize: "24px" }} />
@@ -195,6 +208,9 @@ const Workspace = () => {
             padding: "10px",
             border: "1px solid black",
             borderRadius: "5px",
+          }}
+          onClick={() => {
+            selectItem("other");
           }}
         >
           <Col span={4}>
