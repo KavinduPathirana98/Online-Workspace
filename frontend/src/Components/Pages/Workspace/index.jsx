@@ -5,13 +5,14 @@ import {
   PictureOutlined,
 } from "@ant-design/icons";
 import { Button, Col, Modal, Row } from "antd";
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import JitsiMeetingComponent from "../Meet";
 import SvgIcon from "../../Common/Component/SvgIcon";
 import socket from "../../Socket";
 import { useWebSocket, WebSocketProvider } from "../../Socket/WebSocketContext";
 
+//UI Component for add new blocks
 const BlockEditor = ({
   setBlocks,
   blocks,
@@ -21,32 +22,88 @@ const BlockEditor = ({
   setBlockType,
   content,
   setContent,
+  base64Image,
+  setBase64Image,
+  imageName,
+  setImageName,
+  handleImageUpload,
+  base64PDF,
+  setBase64PDF,
 }) => {
   return (
     <div className="block-editor">
-      <select onChange={(e) => setBlockType(e.target.value)} value={blockType}>
-        <option value="notepad">Notepad</option>
-        <option value="image">Image</option>
-      </select>
       {blockType === "notepad" ? (
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Enter your note here..."
-        />
+        <div>
+          <Row>
+            <Col md={23}></Col>
+            <Col md={1}>
+              <Button onClick={() => handleAddBlock()}>Add</Button>
+            </Col>
+          </Row>
+          <textarea
+            style={{
+              width: "100%",
+              height: "100px",
+              borderColor: "white",
+              border: "none",
+              outline: "none",
+              fontSize: "25px",
+              //fontFamily: `${selectedFont}`,
+            }}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Enter your note here..."
+          />
+        </div>
+      ) : blockType === "pdf" ? (
+        <div>
+          <Row>
+            <Col md={23}></Col>
+            <Col md={1}>
+              <Button onClick={() => handleAddBlock()}>Add</Button>
+            </Col>
+          </Row>
+          <input type="file" accept="pdf/*" onChange={handleImageUpload} />
+          {base64PDF && (
+            <div>
+              <iframe
+                src={base64PDF}
+                title="PDF Document"
+                width="100%"
+                height="600px"
+                style={{ border: "1px solid #ccc" }}
+              ></iframe>
+            </div>
+          )}
+        </div>
+      ) : blockType === "image" ? (
+        <div>
+          <Row>
+            <Col md={23}></Col>
+            <Col md={1}>
+              <Button onClick={() => handleAddBlock()}>Add</Button>
+            </Col>
+          </Row>
+          <input type="file" accept="image/*" onChange={handleImageUpload} />
+          {base64Image && (
+            <div>
+              <img
+                src={base64Image}
+                alt={imageName}
+                style={{ maxWidth: "300px", marginTop: "10px" }}
+              />
+            </div>
+          )}
+        </div>
       ) : (
-        <input
-          type="text"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Enter image URL here..."
-        />
+        ""
       )}
-      <button onClick={() => handleAddBlock()}>Add Block</button>
+      {/* <button onClick={() => handleAddBlock()}>Add Block</button> */}
     </div>
   );
 };
 
+//Display Block Component
 const BlockDisplay = ({ blocks }) => {
   return (
     <div className="block-display">
@@ -54,28 +111,100 @@ const BlockDisplay = ({ blocks }) => {
         blocks.map((block) => (
           <div key={block.id} className="block">
             {block.type === "notepad" ? (
-              <div className="notepad">{block.content}</div>
-            ) : (
-              <div className="image">
-                <img src={block.content} alt="user uploaded" />
+              <div>
+                {block.user ===
+                JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                  <Row>
+                    <Col md={23}></Col>
+                    <Col md={1}>
+                      <Button onClick={() => {}}>Delete</Button>
+                    </Col>
+                  </Row>
+                ) : (
+                  ""
+                )}
+
+                <div className="notepad">{block.content}</div>
               </div>
+            ) : block.type === "image" ? (
+              <div>
+                {block.user ===
+                JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                  <Row>
+                    <Col md={23}></Col>
+                    <Col md={1}>
+                      <Button onClick={() => {}}>Delete</Button>
+                    </Col>
+                  </Row>
+                ) : (
+                  ""
+                )}
+
+                <div className="image">
+                  <img src={block.content} alt="user uploaded" />
+                </div>
+              </div>
+            ) : block.type === "pdf" ? (
+              <div>
+                {block.user ===
+                JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                  <Row>
+                    <Col md={23}></Col>
+                    <Col md={1}>
+                      <Button onClick={() => {}}>Delete</Button>
+                    </Col>
+                  </Row>
+                ) : (
+                  ""
+                )}
+
+                <iframe
+                  src={block.content}
+                  title="PDF Document"
+                  width="100%"
+                  height="600px"
+                  style={{ border: "1px solid #ccc" }}
+                ></iframe>
+              </div>
+            ) : (
+              ""
             )}
           </div>
         ))}
     </div>
   );
 };
+//Main Component Workspace
 const Workspace = () => {
   const [modal, setModal] = useState(false);
   const [components, setComponents] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [blocks, setBlocks] = useState([]);
   const container = [];
-
+  const [base64Image, setBase64Image] = useState("");
+  const [imageName, setImageName] = useState("");
   const [blockType, setBlockType] = useState("notepad");
   const [content, setContent] = useState("");
+  const [base64PDF, setBase64PDF] = useState("");
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      setImageName(file.name);
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setBase64Image(reader.result);
+        setBase64PDF(reader.result);
+        setContent(reader.result);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
   const handleAddBlock = () => {
     const newBlock = {
+      user: JSON.parse(localStorage.getItem("userAuth"))._id,
       id: uuidv4(),
       type: blockType,
       content,
@@ -83,20 +212,20 @@ const Workspace = () => {
     container.push(newBlock);
     setBlocks((prevBlocks) => [...prevBlocks, newBlock]);
     //setBlocks(container);
-    console.log("container", container);
+    console.log("clock", blocks);
     setContent("");
-    socket.emit("block", container);
-    // Listen for initial blocks from the server
-    // socket.on("initial", (data) => {
-    //   console.log(data);
-    //   setBlocks(data.blocks);
-    // });
-    // Listen for new blocks being added
-    socket.on("block", blocks);
+
+    socket.emit("block", blocks);
   };
 
   // Establish WebSocket connection and handle incoming messages
-  useEffect(() => {});
+  useEffect(() => {
+    socket.on("block", (bl) => {
+      console.log(bl);
+      setBlocks(bl);
+    });
+    //socket.on("block", blocks);
+  }, [blocks]);
 
   // Function to add a new component block
   const addComponent = (type) => {
@@ -210,14 +339,14 @@ const Workspace = () => {
             borderRadius: "5px",
           }}
           onClick={() => {
-            selectItem("other");
+            selectItem("pdf");
           }}
         >
           <Col span={4}>
             <AppstoreOutlined style={{ fontSize: "24px" }} />
           </Col>
           <Col span={20}>
-            <div>Other</div>
+            <div>PDF</div>
           </Col>
         </Row>
       </Modal>
@@ -238,6 +367,13 @@ const Workspace = () => {
         setBlockType={setBlockType}
         content={content}
         setContent={setContent}
+        base64Image={base64Image}
+        setBase64Image={setBase64Image}
+        handleImageUpload={handleImageUpload}
+        imageName={imageName}
+        setImageName={setImageName}
+        base64PDF={base64PDF}
+        setBase64PDF={setBase64PDF}
       />
       <BlockDisplay blocks={blocks} />
     </Fragment>

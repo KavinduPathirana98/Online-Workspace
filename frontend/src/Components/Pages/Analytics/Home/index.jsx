@@ -210,9 +210,18 @@ const Home = () => {
     formSettings.setFieldValue("users", "");
     setSettingsModal(!settingsModal);
     setCurrentUpdateRoom(roomID);
-    const filteredUsers = myRooms.filter((item) => item._id === roomID).users;
+    console.log(myRooms);
+    const filteredUsers = myRooms.filter((item) => item.roomID === roomID)[0]
+      .users;
+
     console.log(filteredUsers);
-    formSettings.setFieldValue("users", filteredUsers);
+    formSettings.setFieldValue(
+      "users",
+      filteredUsers &&
+        filteredUsers.map((id) => {
+          return id._id;
+        })
+    );
   };
   useEffect(() => {
     getAllWorkspaces();
@@ -255,7 +264,7 @@ const Home = () => {
             <Button onClick={toggle}>Create Workspace</Button>
           </Col>
         </Row>
-        <Modal isOpen={modal} toggle={toggle}>
+        <Modal isOpen={modal} toggle={toggle} backdrop="static">
           <ModalHeader>Create Workspace</ModalHeader>
           <ModalBody>
             <Form form={form}>
@@ -351,8 +360,8 @@ const Home = () => {
             </Button>
           </ModalFooter>
         </Modal>
-        <Modal isOpen={settingsModal} toggle={toggleSettings}>
-          <ModalHeader>Update Members</ModalHeader>
+        <Modal isOpen={settingsModal} toggle={toggleSettings} backdrop="static">
+          <ModalHeader toggle={toggleSettings}>Update Members</ModalHeader>
           <ModalBody>
             <Form form={formSettings}>
               <Row>

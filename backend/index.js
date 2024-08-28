@@ -82,11 +82,10 @@ io.on("connect", (socket) => {
 
   //update blocks
   socket.on("block", (block) => {
-    blocks.push(block);
     //broadcast to all users
     connections.forEach((con) => {
       if (con.id !== socket.id) {
-        con.emit("block", blocks);
+        con.emit("block", block);
       }
     });
   });
