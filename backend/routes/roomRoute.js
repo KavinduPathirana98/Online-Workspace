@@ -88,7 +88,7 @@ router.post("/create", async (req, res) => {
 
     if (roomRes) {
       res.json({
-        msg: "Error Occurred While Creating Rom.Please Recreate !",
+        msg: "Error Occurred While Creating Room.Please Recreate !",
         code: 0,
         data: [{ roomID: roomID }],
       });
@@ -97,9 +97,9 @@ router.post("/create", async (req, res) => {
       if (!fs.existsSync(uploadFolder)) {
         fs.mkdirSync(uploadFolder, { recursive: true });
       }
-      if (!fs.existsSync(uploadFolder + "/temp")) {
-        fs.mkdirSync(uploadFolder + "/temp", { recursive: true });
-      }
+      // if (!fs.existsSync(uploadFolder + "/temp")) {
+      //   fs.mkdirSync(uploadFolder + "/temp", { recursive: true });
+      // }
       const response = await Room.create({
         roomName,
         roomID,
