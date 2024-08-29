@@ -33,7 +33,11 @@ router.put("/update-users/:roomID", async (req, res) => {
     }
 
     // Update the users array in the room document
-    room.users = users;
+    room.users = users.map((user) => ({
+      user: user,
+      onlineTime: user.onlineTime || 0,
+      blockCount: user.blockCount || 0,
+    }));
 
     // Save the updated room document
     await room.save();
@@ -162,8 +166,8 @@ router.post("/search", async (req, res) => {
 
     // Find rooms where the user is either the creator or inside the room
     const rooms = await Room.find({
-      $or: [{ createdUser: userID }, { users: { $in: [userID] } }],
-    }).populate("createdUser users", "-password -__v"); // Populating user details without sensitive information
+      $or: [{ createdUser: userID }, { "users.user": { $in: [userID] } }],
+    }).populate("createdUser users.user", "-password -__v"); // Populating user details without sensitive information
 
     console.log(rooms);
 

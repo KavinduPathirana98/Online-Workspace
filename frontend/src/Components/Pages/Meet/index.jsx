@@ -36,6 +36,11 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
     setMeetingStarted(true);
   };
 
+  const user =
+    JSON.parse(localStorage.getItem("userAuth")).fName +
+    " " +
+    JSON.parse(localStorage.getItem("userAuth")).lName;
+  console.log(user);
   return (
     <div>
       {/* Button to start the meeting */}
@@ -72,7 +77,7 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
         >
           <JitsiMeeting
             domain="meet.jit.si"
-            roomName="YourUniqueRoomName"
+            roomName={localStorage.getItem("room")}
             configOverwrite={{
               startWithAudioMuted: true,
               startWithVideoMuted: true,
@@ -81,7 +86,7 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
               TOOLBAR_BUTTONS: ["microphone", "camera", "chat"],
             }}
             userInfo={{
-              displayName: "Your Name",
+              displayName: user,
             }}
             onApiReady={(externalApi) => {
               // You can store the API instance and call methods on it later.

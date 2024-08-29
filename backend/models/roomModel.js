@@ -15,7 +15,13 @@ const RoomSchema = new Schema({
     type: String,
     required: true,
   },
-  users: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  users: [
+    {
+      user: { type: Schema.Types.ObjectId, ref: "User" },
+      onlineTime: { type: Number, default: 0 },
+      blockCount: { type: Number, default: 0 },
+    },
+  ],
   CreatedOn: {
     type: Date,
     default: Date.now,

@@ -208,20 +208,26 @@ const Home = () => {
 
   const toggleSettings = (roomID) => {
     formSettings.setFieldValue("users", "");
-    setSettingsModal(!settingsModal);
     setCurrentUpdateRoom(roomID);
-    console.log(myRooms);
-    const filteredUsers = myRooms.filter((item) => item.roomID === roomID)[0]
-      .users;
+    if (!settingsModal) {
+      console.log(myRooms);
+      const filteredUsers = myRooms.filter((item) => item.roomID === roomID)[0]
+        .users;
 
-    console.log(filteredUsers);
-    formSettings.setFieldValue(
-      "users",
-      filteredUsers &&
-        filteredUsers.map((id) => {
-          return id._id;
+      console.log(
+        filteredUsers.map((user) => {
+          return user.user._id;
         })
-    );
+      );
+      formSettings.setFieldValue(
+        "users",
+        filteredUsers &&
+          filteredUsers.map((user) => {
+            return user.user._id;
+          })
+      );
+    }
+    setSettingsModal(!settingsModal);
   };
   useEffect(() => {
     getAllWorkspaces();
