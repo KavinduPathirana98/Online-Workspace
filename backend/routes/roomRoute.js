@@ -54,7 +54,33 @@ router.put("/update-users/:roomID", async (req, res) => {
       .json({ msg: "Error updating users in room", code: 0, data: [] });
   }
 });
+router.get("/get/:roomID", async (req, res) => {
+  try {
+    const { roomID } = req.params;
 
+    // Find the room by roomID
+    const room = await Room.findOne({ roomID: roomID });
+
+    if (!room) {
+      return res.status(404).json({
+        msg: "Room not found!",
+        code: 0,
+        data: [],
+      });
+    }
+
+    res.json({
+      msg: "Room successfully retrieved!",
+      code: 1,
+      data: [room],
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ msg: "Error while retrieving room", code: 0, data: [] });
+  }
+});
 // Delete Room by roomID
 router.delete("/delete/:roomID", async (req, res) => {
   try {
@@ -84,6 +110,105 @@ router.delete("/delete/:roomID", async (req, res) => {
     res.status(500).json({ msg: "Error deleting room", code: 0, data: [] });
   }
 });
+// Update user's online time in a room by roomID and userID
+router.put("/update-online-time/:roomID/:userID", async (req, res) => {
+  try {
+    const { roomID, userID } = req.params;
+    const { onlineTime } = req.body; // online time to be updated in minutes
+
+    // Find the room by roomID
+    const room = await Room.findOne({ roomID: roomID });
+
+    if (!room) {
+      return res.status(404).json({
+        msg: "Room not found!",
+        code: 0,
+        data: [],
+      });
+    }
+
+    // Find the user in the room and update their online time
+    const userInRoom = room.users.find(
+      (user) => user.user.toString() === userID
+    );
+
+    if (!userInRoom) {
+      return res.status(404).json({
+        msg: "User not found in this room!",
+        code: 0,
+        data: [],
+      });
+    }
+
+    userInRoom.onlineTime = onlineTime;
+
+    // Save the updated room document
+    await room.save();
+
+    res.json({
+      msg: "User's online time successfully updated!",
+      code: 1,
+      data: [
+        { roomID: roomID, userID: userID, onlineTime: userInRoom.onlineTime },
+      ],
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ msg: "Error updating online time", code: 0, data: [] });
+  }
+});
+// Update user's block count in a room by roomID and userID
+router.put("/update-block-count/:roomID/:userID", async (req, res) => {
+  try {
+    const { roomID, userID } = req.params;
+    const { blockCount } = req.body; // New block count to be updated
+
+    // Find the room by roomID
+    const room = await Room.findOne({ roomID: roomID });
+
+    if (!room) {
+      return res.status(404).json({
+        msg: "Room not found!",
+        code: 0,
+        data: [],
+      });
+    }
+
+    // Find the user in the room and update their block count
+    const userInRoom = room.users.find(
+      (user) => user.user.toString() === userID
+    );
+
+    if (!userInRoom) {
+      return res.status(404).json({
+        msg: "User not found in this room!",
+        code: 0,
+        data: [],
+      });
+    }
+
+    userInRoom.blockCount = blockCount;
+
+    // Save the updated room document
+    await room.save();
+
+    res.json({
+      msg: "User's block count successfully updated!",
+      code: 1,
+      data: [
+        { roomID: roomID, userID: userID, blockCount: userInRoom.blockCount },
+      ],
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ msg: "Error updating block count", code: 0, data: [] });
+  }
+});
+//Create room
 router.post("/create", async (req, res) => {
   try {
     const { roomName, roomID, createdUser, roomPassword, users } = req.body;

@@ -152,11 +152,19 @@ const Home = () => {
           cancelButtonText: "No, keep it",
         })
         .then(
-          function () {
+          async function async() {
             socket.emit("joinRoom", { username: Username, room: roomID });
             setJoined(true);
             localStorage.setItem("room", roomID);
             socketRef.current = socket;
+            await axios
+              .get(socket_api + "api/room/get/" + roomID)
+              .then((response) => {
+                localStorage.setItem(
+                  "roomDetails",
+                  JSON.stringify(response.data.data)
+                );
+              });
           },
           function (dismiss) {
             // dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'

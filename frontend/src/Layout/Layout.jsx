@@ -13,6 +13,8 @@ import CustomizerContext from "../_helper/Customizer";
 import AnimationThemeContext from "../_helper/AnimationTheme";
 import ConfigDB from "../Config/ThemeConfig";
 import socket from "../Components/Socket";
+import { socket_api } from "../Constant";
+import axios from "axios";
 
 const AppLayout = ({ children, classNames, ...rest }) => {
   const { layout } = useContext(CustomizerContext);
@@ -35,6 +37,14 @@ const AppLayout = ({ children, classNames, ...rest }) => {
     socket.emit("down", { x, y, email: Username });
   };
   const Username = JSON.parse(localStorage.getItem("userAuth")).email;
+  const [minutes, setMinutes] = useState(0);
+
+  let onlineTime = JSON.parse(
+    localStorage.getItem("roomDetails")
+  )[0].users.filter(
+    (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+  )[0].onlineTime;
+
   useEffect(() => {
     socket.on("ondown", (data) => {
       setMousePositions((prevPositions) => ({
@@ -42,10 +52,22 @@ const AppLayout = ({ children, classNames, ...rest }) => {
         [data.email]: { x: data.x, y: data.y },
       }));
     });
+    const interval = setInterval(() => {
+      setMinutes((prevSeconds) => prevSeconds + 1);
+      onlineTime = onlineTime + 1;
+      axios
+        .put(
+          socket_api +
+            `api/room/update-online-time/${localStorage.getItem("room")}/${
+              JSON.parse(localStorage.getItem("userAuth"))._id
+            }`,
+          { onlineTime }
+        )
+        .then((response) => {});
+    }, 58000);
 
-    return () => {
-      socket.off("ondown");
-    };
+    // Cleanup the interval when the component is unmounted or before the next effect runs
+    return () => clearInterval(interval), socket.off("ondown");
   }, []);
 
   return (

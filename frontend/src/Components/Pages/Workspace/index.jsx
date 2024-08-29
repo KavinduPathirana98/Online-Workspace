@@ -11,6 +11,8 @@ import JitsiMeetingComponent from "../Meet";
 import SvgIcon from "../../Common/Component/SvgIcon";
 import socket from "../../Socket";
 import { useWebSocket, WebSocketProvider } from "../../Socket/WebSocketContext";
+import { socket_api } from "../../../Constant";
+import axios from "axios";
 
 //UI Component for add new blocks
 const BlockEditor = ({
@@ -186,6 +188,22 @@ const Workspace = () => {
   const [blockType, setBlockType] = useState("notepad");
   const [content, setContent] = useState("");
   const [base64PDF, setBase64PDF] = useState("");
+  let blockCount = JSON.parse(
+    localStorage.getItem("roomDetails")
+  )[0].users.filter(
+    (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+  )[0].blockCount;
+  const updateBlockCount = () => {
+    axios
+      .put(
+        socket_api +
+          `api/room/update-block-count/${localStorage.getItem("room")}/${
+            JSON.parse(localStorage.getItem("userAuth"))._id
+          }`,
+        { blockCount }
+      )
+      .then((response) => {});
+  };
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
 
@@ -216,6 +234,7 @@ const Workspace = () => {
     setContent("");
 
     socket.emit("block", blocks);
+    updateBlockCount();
   };
 
   // Establish WebSocket connection and handle incoming messages
