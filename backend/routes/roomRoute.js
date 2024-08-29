@@ -236,7 +236,20 @@ router.post("/create", async (req, res) => {
         roomPassword,
         users,
       });
+      const room = await Room.findOne({ roomID: roomID });
+      console.log(room, "room");
+      // Update the users array in the room document
+      room.users =
+        users.length > 0
+          ? users.map((user) => ({
+              user: user,
+              onlineTime: user.onlineTime || 0,
+              blockCount: user.blockCount || 0,
+            }))
+          : [{ user: createdUser, onlineTime: 0, blockCount: 0 }];
 
+      // Save the updated room document
+      await room.save();
       res
         .json({
           msg: "Successfully Created Room !",
