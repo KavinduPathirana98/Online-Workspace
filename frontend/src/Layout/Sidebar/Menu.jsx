@@ -16,7 +16,7 @@ export const MENUITEMS = [
           },
           {
             active: false,
-            path: `${process.env.PUBLIC_URL}/pages/note-pad`,
+            path: `${process.env.PUBLIC_URL}/pages/dashboard`,
             title: "Dashboard",
             type: "link",
           },

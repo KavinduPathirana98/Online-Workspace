@@ -39,11 +39,14 @@ const AppLayout = ({ children, classNames, ...rest }) => {
   const Username = JSON.parse(localStorage.getItem("userAuth")).email;
   const [minutes, setMinutes] = useState(0);
 
-  let onlineTime = JSON.parse(
-    localStorage.getItem("roomDetails")
-  )[0].users.filter(
-    (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
-  )[0].onlineTime;
+  let onlineTime =
+    localStorage.getItem("roomDetails") &&
+    JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+      (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+    )[0] &&
+    JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+      (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+    )[0].onlineTime;
 
   useEffect(() => {
     socket.on("ondown", (data) => {
@@ -54,7 +57,7 @@ const AppLayout = ({ children, classNames, ...rest }) => {
     });
     const interval = setInterval(() => {
       setMinutes((prevSeconds) => prevSeconds + 1);
-      onlineTime = onlineTime + 1;
+      onlineTime = onlineTime == null ? 0 : onlineTime + 1;
       axios
         .put(
           socket_api +

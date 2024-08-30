@@ -59,7 +59,10 @@ router.get("/get/:roomID", async (req, res) => {
     const { roomID } = req.params;
 
     // Find the room by roomID
-    const room = await Room.findOne({ roomID: roomID });
+    const room = await Room.findOne({ roomID: roomID }).populate(
+      "users.user",
+      "-password -__v"
+    );
 
     if (!room) {
       return res.status(404).json({

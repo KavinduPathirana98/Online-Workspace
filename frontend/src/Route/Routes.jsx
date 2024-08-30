@@ -1,4 +1,5 @@
 // //Samp lePage
+import Dashboard from "../Components/Pages/Analytics/Dashboard";
 import Home from "../Components/Pages/Analytics/Home";
 import SamplePage from "../Components/Pages/PageLayout/SimplePage";
 import Sample from "../Components/Pages/Sample";
@@ -32,5 +33,9 @@ export const routes = [
   {
     path: `${process.env.PUBLIC_URL}/pages/workspace`,
     Component: Workspace,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/pages/dashboard`,
+    Component: Dashboard,
   },
 ];

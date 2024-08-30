@@ -38,6 +38,7 @@
     "react-bootstrap-typeahead": "^5.2.2",
     "react-chartist": "^0.14.4",
     "react-chartjs-2": "^4.1.0",
+    "react-circular-progressbar": "^2.1.0",
     "react-ckeditor-component": "^1.1.0",
     "react-clock": "^3.1.0",
     "react-copy-to-clipboard": "^5.0.4",
