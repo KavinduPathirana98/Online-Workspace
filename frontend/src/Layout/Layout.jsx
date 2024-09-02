@@ -38,7 +38,21 @@ const AppLayout = ({ children, classNames, ...rest }) => {
   };
   const Username = JSON.parse(localStorage.getItem("userAuth")).email;
   const [minutes, setMinutes] = useState(0);
-
+  const getRoomDetails = async () => {
+    try {
+      await axios
+        .get(socket_api + `api/room/get/${localStorage.getItem("room")}`)
+        .then((response) => {
+          localStorage.setItem(
+            "roomDetails",
+            JSON.stringify(response.data.data)
+          );
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  console.log(JSON.parse(localStorage.getItem("roomDetails"))[0].users);
   let onlineTime =
     localStorage.getItem("roomDetails") &&
     JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
@@ -49,6 +63,7 @@ const AppLayout = ({ children, classNames, ...rest }) => {
     )[0].onlineTime;
 
   useEffect(() => {
+    getRoomDetails();
     socket.on("ondown", (data) => {
       setMousePositions((prevPositions) => ({
         ...prevPositions,

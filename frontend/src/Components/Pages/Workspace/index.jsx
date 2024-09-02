@@ -188,11 +188,12 @@ const Workspace = () => {
   const [blockType, setBlockType] = useState("notepad");
   const [content, setContent] = useState("");
   const [base64PDF, setBase64PDF] = useState("");
-  let blockCount = JSON.parse(
-    localStorage.getItem("roomDetails")
-  )[0].users.filter(
-    (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
-  )[0].blockCount;
+  let blockCount =
+    localStorage.getItem("roomDetails") &&
+    JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+      (user) =>
+        user.user._id === JSON.parse(localStorage.getItem("userAuth"))._id
+    )[0].blockCount;
   const updateBlockCount = () => {
     axios
       .put(

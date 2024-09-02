@@ -20,13 +20,19 @@ const Dashboard = () => {
       axios
         .get(socket_api + `api/room/get/${localStorage.getItem("room")}`)
         .then((response) => {
+          let online = 0;
+          let count = 0;
           console.log(response.data.data);
           response.data.data &&
             response.data.data[0].users &&
             response.data.data[0].users.map((item) => {
-              setTotalActive((prev) => prev + item.onlineTime);
-              setTotalContribution((prev) => prev + item.blockCount);
+              console.log(item);
+              online = online + item.onlineTime;
+              count = count + item.blockCount;
             });
+          console.log(online, count);
+          setTotalActive(online);
+          setTotalContribution(count);
           setRoom(response.data.data);
         });
     } catch (err) {
@@ -38,55 +44,76 @@ const Dashboard = () => {
   }, []);
   return (
     <div>
+      <br></br>
+
       <Row>
         {room &&
           room[0].users.map((item) => {
             return (
-              <Card className="get-card">
-                <CardHeader className="card-no-border">
-                  <H5>{"Workspace Progress"}</H5>
-                  <span className="f-14 f-w-500 f-light">
-                    {"Workspace Progress"}
-                  </span>
-                </CardHeader>
-                <br></br>
-                <CardBody className="pt-0">
-                  <div className="progress-chart-wrap">
-                    <Row>
-                      <Col md={2}>
-                        <div
-                        //   style={{ height: "50%", width: "50%" }}
-                        >
-                          <CircularProgressbar
-                            value={(item.onlineTime / totalActive) * 100}
-                            text={`${(item.onlineTime / totalActive) * 100}`}
-                          />
-                        </div>
-                      </Col>
-                      <Col md={2}>
-                        <div
-                          style={
-                            {
-                              // height: "50%",
-                              // width: "50%",
-                              //marginLeft: "-50%",
+              <Col>
+                <Card>
+                  <CardHeader>
+                    <H5>{"Workspace Progress"}</H5>
+                    <span>{`${item.user.fName} ${item.user.lName}`}</span>
+                  </CardHeader>
+                  <br></br>
+                  <CardBody>
+                    <div>
+                      <Row>
+                        <Col md={6}>
+                          <div
+                          //   style={{ height: "50%", width: "50%" }}
+                          >
+                            <CircularProgressbar
+                              value={
+                                totalActive == 0
+                                  ? 0
+                                  : (item.onlineTime / totalActive) * 100
+                              }
+                              text={
+                                totalActive == 0
+                                  ? "0%"
+                                  : `${(item.onlineTime / totalActive) * 100} %`
+                              }
+                            />
+                          </div>
+                        </Col>
+                        <Col md={6}>
+                          <div
+                            style={
+                              {
+                                // height: "50%",
+                                // width: "50%",
+                                //marginLeft: "-50%",
+                              }
                             }
-                          }
-                        >
-                          <CircularProgressbar
-                            styles={buildStyles({
-                              textColor: "red",
-                              pathColor: "red",
-                            })}
-                            value={84}
-                            text={"84%"}
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </CardBody>
-              </Card>
+                          >
+                            <CircularProgressbar
+                              styles={buildStyles({
+                                textColor: "red",
+                                pathColor: "red",
+                              })}
+                              value={
+                                totalContribution == 0
+                                  ? 0
+                                  : (item.blockCount / totalContribution) * 100
+                              }
+                              text={
+                                totalContribution == 0
+                                  ? "0%"
+                                  : `${
+                                      (item.blockCount / totalContribution) *
+                                      100
+                                    } %`
+                              }
+                            />
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
             );
           })}
       </Row>
