@@ -53,7 +53,7 @@ const NotePad = ({ inx, setInx }) => {
       <br></br>
       <textarea
         style={{
-          width: "209%",
+          width: "100%",
           height: "1000px",
           borderColor: "white",
           border: "none",

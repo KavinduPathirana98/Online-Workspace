@@ -188,22 +188,74 @@ const Workspace = () => {
   const [blockType, setBlockType] = useState("notepad");
   const [content, setContent] = useState("");
   const [base64PDF, setBase64PDF] = useState("");
-  let blockCount =
-    localStorage.getItem("roomDetails") &&
-    JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
-      (user) =>
-        user.user._id === JSON.parse(localStorage.getItem("userAuth"))._id
-    )[0].blockCount;
+
+  const getRoomDetails = async () => {
+    try {
+      await axios
+        .get(socket_api + `api/room/get/${localStorage.getItem("room")}`)
+        .then((response) => {
+          localStorage.setItem(
+            "roomDetails",
+            JSON.stringify(response.data.data)
+          );
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  // console.log(  JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+  //   (user) =>
+  //     user.user._id === JSON.parse(localStorage.getItem("userAuth"))._id
+  // )[0].blockCount);
+  // let blockCount =
+  //   localStorage.getItem("roomDetails") &&
+  //   JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+  //     (user) => user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+  //   )[0] &&
+  //   JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+  //     (user) =>
+  //       user.user._id === JSON.parse(localStorage.getItem("userAuth"))._id
+  //   )[0].blockCount;
+  // let blockCount =
+  //   localStorage.getItem("roomDetails") &&
+  //   JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+  //     (user) =>
+  //       user.user._id === JSON.parse(localStorage.getItem("userAuth"))._id
+  //   )[0].blockCount;
   const updateBlockCount = () => {
+    console.log(
+      "aaa",
+      JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+        (user) =>
+          user.user._id === JSON.parse(localStorage.getItem("userAuth"))._id
+      )[0]
+    );
     axios
       .put(
         socket_api +
           `api/room/update-block-count/${localStorage.getItem("room")}/${
             JSON.parse(localStorage.getItem("userAuth"))._id
           }`,
-        { blockCount }
+        {
+          blockCount:
+            Number(
+              localStorage.getItem("roomDetails") &&
+                JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+                  (user) =>
+                    user.user ===
+                    JSON.parse(localStorage.getItem("userAuth"))._id
+                )[0] &&
+                JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
+                  (user) =>
+                    user.user._id ===
+                    JSON.parse(localStorage.getItem("userAuth"))._id
+                )[0].blockCount
+            ) + 1,
+        }
       )
-      .then((response) => {});
+      .then((response) => {
+        getRoomDetails();
+      });
   };
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -240,6 +292,7 @@ const Workspace = () => {
 
   // Establish WebSocket connection and handle incoming messages
   useEffect(() => {
+    getRoomDetails();
     socket.on("block", (bl) => {
       console.log(bl);
       setBlocks(bl);

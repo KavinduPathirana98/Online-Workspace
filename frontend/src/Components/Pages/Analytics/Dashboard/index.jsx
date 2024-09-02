@@ -68,12 +68,16 @@ const Dashboard = () => {
                               value={
                                 totalActive == 0
                                   ? 0
-                                  : (item.onlineTime / totalActive) * 100
+                                  : Number(
+                                      (item.onlineTime / totalActive) * 100
+                                    ).toFixed(2)
                               }
                               text={
                                 totalActive == 0
                                   ? "0%"
-                                  : `${(item.onlineTime / totalActive) * 100} %`
+                                  : `${Number(
+                                      (item.onlineTime / totalActive) * 100
+                                    ).toFixed(2)} %`
                               }
                             />
                           </div>
@@ -90,21 +94,24 @@ const Dashboard = () => {
                           >
                             <CircularProgressbar
                               styles={buildStyles({
-                                textColor: "red",
-                                pathColor: "red",
+                                textColor: "#CF09ED",
+                                pathColor: "#CF09ED",
                               })}
                               value={
                                 totalContribution == 0
                                   ? 0
-                                  : (item.blockCount / totalContribution) * 100
+                                  : Number(
+                                      (item.blockCount / totalContribution) *
+                                        100
+                                    ).toFixed(2)
                               }
                               text={
                                 totalContribution == 0
                                   ? "0%"
-                                  : `${
+                                  : `${Number(
                                       (item.blockCount / totalContribution) *
-                                      100
-                                    } %`
+                                        100
+                                    ).toFixed(2)} %`
                               }
                             />
                           </div>

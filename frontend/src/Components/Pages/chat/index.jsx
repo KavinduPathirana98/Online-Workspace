@@ -3,7 +3,7 @@ import { H6, P } from "../../../AbstractElements";
 import { ContactHistory } from "../../../Constant";
 import { DoubleRightOutlined } from "@ant-design/icons/";
 import socket from "../../Socket";
-import { Col, Row } from "reactstrap";
+import { Col, Container, Row } from "reactstrap";
 import { Button } from "antd";
 
 const ChatPanel = () => {
@@ -82,7 +82,7 @@ const ChatPanel = () => {
           </div>
         ) : ( */}
         <div>
-          <div style={{ height: "700px", overflowY: "scroll" }}>
+          <div style={{ height: "400px", overflowY: "scroll" }}>
             <br></br>
             {messages &&
               messages.map((msg, index) => (
@@ -92,26 +92,28 @@ const ChatPanel = () => {
               ))}
           </div>
           <br></br>
-          <Row>
-            <Col md={9}>
-              <input
-                type="text"
-                placeholder="Message"
-                className="form-control"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </Col>
-            <Col>
-              <Button
-                onClick={() => {
-                  sendMessage();
-                }}
-              >
-                <DoubleRightOutlined />
-              </Button>
-            </Col>
-          </Row>
+          <Container>
+            <Row>
+              <Col md={9}>
+                <input
+                  type="text"
+                  placeholder="Message"
+                  className="form-control"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Button
+                  onClick={() => {
+                    sendMessage();
+                  }}
+                >
+                  <DoubleRightOutlined />
+                </Button>
+              </Col>
+            </Row>
+          </Container>
         </div>
         {/* )} */}
       </div>

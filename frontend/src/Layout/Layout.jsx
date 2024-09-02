@@ -47,6 +47,17 @@ const AppLayout = ({ children, classNames, ...rest }) => {
             "roomDetails",
             JSON.stringify(response.data.data)
           );
+          setMinutes(
+            response.data.data &&
+              response.data.data[0].users.filter(
+                (user) =>
+                  user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+              )[0] &&
+              response.data.data[0].users.filter(
+                (user) =>
+                  user.user === JSON.parse(localStorage.getItem("userAuth"))._id
+              )[0].onlineTime
+          );
         });
     } catch (err) {
       console.log(err);
@@ -70,18 +81,20 @@ const AppLayout = ({ children, classNames, ...rest }) => {
         [data.email]: { x: data.x, y: data.y },
       }));
     });
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       setMinutes((prevSeconds) => prevSeconds + 1);
       onlineTime = onlineTime == null ? 0 : onlineTime + 1;
-      axios
+      await axios
         .put(
           socket_api +
             `api/room/update-online-time/${localStorage.getItem("room")}/${
               JSON.parse(localStorage.getItem("userAuth"))._id
             }`,
-          { onlineTime }
+          { onlineTime: minutes + 1 }
         )
-        .then((response) => {});
+        .then(async (response) => {
+          await getRoomDetails();
+        });
     }, 58000);
 
     // Cleanup the interval when the component is unmounted or before the next effect runs
