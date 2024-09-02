@@ -42,6 +42,7 @@ const BlockEditor = ({
               <Button onClick={() => handleAddBlock()}>Add</Button>
             </Col>
           </Row>
+          <br></br>
           <textarea
             style={{
               width: "100%",
@@ -65,6 +66,7 @@ const BlockEditor = ({
               <Button onClick={() => handleAddBlock()}>Add</Button>
             </Col>
           </Row>
+          <br></br>
           <input type="file" accept="pdf/*" onChange={handleImageUpload} />
           {base64PDF && (
             <div>
@@ -86,6 +88,7 @@ const BlockEditor = ({
               <Button onClick={() => handleAddBlock()}>Add</Button>
             </Col>
           </Row>
+          <br></br>
           <input type="file" accept="image/*" onChange={handleImageUpload} />
           {base64Image && (
             <div>
@@ -116,12 +119,15 @@ const BlockDisplay = ({ blocks }) => {
               <div>
                 {block.user ===
                 JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                  <Row>
-                    <Col md={23}></Col>
-                    <Col md={1}>
-                      <Button onClick={() => {}}>Delete</Button>
-                    </Col>
-                  </Row>
+                  <div>
+                    <Row>
+                      <Col md={23}></Col>
+                      <Col md={1}>
+                        <Button onClick={() => {}}>Delete</Button>
+                      </Col>
+                    </Row>
+                    <br></br>
+                  </div>
                 ) : (
                   ""
                 )}
@@ -132,12 +138,15 @@ const BlockDisplay = ({ blocks }) => {
               <div>
                 {block.user ===
                 JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                  <Row>
-                    <Col md={23}></Col>
-                    <Col md={1}>
-                      <Button onClick={() => {}}>Delete</Button>
-                    </Col>
-                  </Row>
+                  <div>
+                    <Row>
+                      <Col md={23}></Col>
+                      <Col md={1}>
+                        <Button onClick={() => {}}>Delete</Button>
+                      </Col>
+                    </Row>
+                    <br></br>
+                  </div>
                 ) : (
                   ""
                 )}
@@ -150,12 +159,15 @@ const BlockDisplay = ({ blocks }) => {
               <div>
                 {block.user ===
                 JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                  <Row>
-                    <Col md={23}></Col>
-                    <Col md={1}>
-                      <Button onClick={() => {}}>Delete</Button>
-                    </Col>
-                  </Row>
+                  <div>
+                    <Row>
+                      <Col md={23}></Col>
+                      <Col md={1}>
+                        <Button onClick={() => {}}>Delete</Button>
+                      </Col>
+                    </Row>
+                    <br></br>
+                  </div>
                 ) : (
                   ""
                 )}
@@ -249,7 +261,15 @@ const Workspace = () => {
                   (user) =>
                     user.user._id ===
                     JSON.parse(localStorage.getItem("userAuth"))._id
-                )[0].blockCount
+                )[0].blockCount == null
+                ? 1
+                : JSON.parse(
+                    localStorage.getItem("roomDetails")
+                  )[0].users.filter(
+                    (user) =>
+                      user.user._id ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id
+                  )[0].blockCount
             ) + 1,
         }
       )
@@ -338,9 +358,11 @@ const Workspace = () => {
   };
   return (
     <Fragment>
+      <br></br>
       <Button type="primary" onClick={() => setModal(true)}>
         Open Modal
       </Button>
+      <br></br>
       <Modal
         title="Options"
         centered
@@ -430,7 +452,7 @@ const Workspace = () => {
           <button onClick={() => addComponent(selectedOption)}>Confirm</button>
         </div>
       )}
-
+      <br></br>
       <BlockEditor
         setBlocks={setBlocks}
         blocks={blocks}
@@ -448,6 +470,7 @@ const Workspace = () => {
         base64PDF={base64PDF}
         setBase64PDF={setBase64PDF}
       />
+      <br></br>
       <BlockDisplay blocks={blocks} />
     </Fragment>
   );

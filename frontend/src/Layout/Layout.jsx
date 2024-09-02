@@ -38,6 +38,7 @@ const AppLayout = ({ children, classNames, ...rest }) => {
   };
   const Username = JSON.parse(localStorage.getItem("userAuth")).email;
   const [minutes, setMinutes] = useState(0);
+  const [room, setRoom] = useState();
   const getRoomDetails = async () => {
     try {
       await axios
@@ -47,23 +48,13 @@ const AppLayout = ({ children, classNames, ...rest }) => {
             "roomDetails",
             JSON.stringify(response.data.data)
           );
-          setMinutes(
-            response.data.data &&
-              response.data.data[0].users.filter(
-                (user) =>
-                  user.user === JSON.parse(localStorage.getItem("userAuth"))._id
-              )[0] &&
-              response.data.data[0].users.filter(
-                (user) =>
-                  user.user === JSON.parse(localStorage.getItem("userAuth"))._id
-              )[0].onlineTime
-          );
+          setRoom(response.data.data);
         });
     } catch (err) {
       console.log(err);
     }
   };
-  console.log(JSON.parse(localStorage.getItem("roomDetails"))[0].users);
+
   let onlineTime =
     localStorage.getItem("roomDetails") &&
     JSON.parse(localStorage.getItem("roomDetails"))[0].users.filter(
@@ -81,25 +72,52 @@ const AppLayout = ({ children, classNames, ...rest }) => {
         [data.email]: { x: data.x, y: data.y },
       }));
     });
-    const interval = setInterval(async () => {
+    const interval = setInterval(() => {
       setMinutes((prevSeconds) => prevSeconds + 1);
-      onlineTime = onlineTime == null ? 0 : onlineTime + 1;
-      await axios
+      //onlineTime = onlineTime == null ? 0 : onlineTime + 1;
+      axios
         .put(
           socket_api +
             `api/room/update-online-time/${localStorage.getItem("room")}/${
               JSON.parse(localStorage.getItem("userAuth"))._id
             }`,
-          { onlineTime: minutes + 1 }
+          {
+            onlineTime:
+              Number(
+                localStorage.getItem("roomDetails") &&
+                  JSON.parse(
+                    localStorage.getItem("roomDetails")
+                  )[0].users.filter(
+                    (user) =>
+                      user.user ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id
+                  )[0] &&
+                  JSON.parse(
+                    localStorage.getItem("roomDetails")
+                  )[0].users.filter(
+                    (user) =>
+                      user.user._id ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id
+                  )[0].onlineTime == null
+                  ? 1
+                  : JSON.parse(
+                      localStorage.getItem("roomDetails")
+                    )[0].users.filter(
+                      (user) =>
+                        user.user._id ===
+                        JSON.parse(localStorage.getItem("userAuth"))._id
+                    )[0].onlineTime
+              ) + 1,
+          }
         )
-        .then(async (response) => {
-          await getRoomDetails();
+        .then((response) => {
+          getRoomDetails();
         });
     }, 58000);
 
     // Cleanup the interval when the component is unmounted or before the next effect runs
     return () => clearInterval(interval), socket.off("ondown");
-  }, []);
+  }, [room]);
 
   return (
     <Fragment>
