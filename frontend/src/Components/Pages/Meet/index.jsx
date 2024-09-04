@@ -40,7 +40,7 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
     JSON.parse(localStorage.getItem("userAuth")).fName +
     " " +
     JSON.parse(localStorage.getItem("userAuth")).lName;
-  console.log(user);
+
   return (
     <div>
       {/* Button to start the meeting */}

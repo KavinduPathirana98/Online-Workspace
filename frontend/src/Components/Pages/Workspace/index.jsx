@@ -110,7 +110,7 @@ const BlockEditor = ({
 };
 
 //Display Block Component
-const BlockDisplay = ({ blocks }) => {
+const BlockDisplay = ({ blocks, handleDeleteBlock }) => {
   return (
     <div className="block-display">
       {blocks &&
@@ -120,17 +120,23 @@ const BlockDisplay = ({ blocks }) => {
               <div>
                 <Card>
                   <CardHeader style={{ paddingBottom: -10 }}>
-                    {block.user ===
-                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                      <Row>
-                        <Col md={23}>Added By :{block.username}</Col>
+                    <Row>
+                      <Col md={23}>Added By :{block.username}</Col>
+                      {block.user ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id ? (
                         <Col md={1}>
-                          <Button onClick={() => {}}>Delete</Button>
+                          <Button
+                            onClick={() => {
+                              handleDeleteBlock(block.id);
+                            }}
+                          >
+                            Delete
+                          </Button>
                         </Col>
-                      </Row>
-                    ) : (
-                      ""
-                    )}
+                      ) : (
+                        ""
+                      )}
+                    </Row>
                   </CardHeader>
                   <CardBody>
                     <div className="notepad">{block.content}</div>
@@ -141,17 +147,23 @@ const BlockDisplay = ({ blocks }) => {
               <div>
                 <Card>
                   <CardHeader style={{ paddingBottom: -10 }}>
-                    {block.user ===
-                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                      <Row>
-                        <Col md={23}>Added By :{block.username}</Col>
+                    <Row>
+                      <Col md={23}>Added By :{block.username}</Col>
+                      {block.user ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id ? (
                         <Col md={1}>
-                          <Button onClick={() => {}}>Delete</Button>
+                          <Button
+                            onClick={() => {
+                              handleDeleteBlock(block.id);
+                            }}
+                          >
+                            Delete
+                          </Button>
                         </Col>
-                      </Row>
-                    ) : (
-                      ""
-                    )}
+                      ) : (
+                        ""
+                      )}
+                    </Row>
                   </CardHeader>
                   <CardBody>
                     <div>
@@ -168,17 +180,23 @@ const BlockDisplay = ({ blocks }) => {
               <div>
                 <Card>
                   <CardHeader style={{ paddingBottom: -10 }}>
-                    {block.user ===
-                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                      <Row>
-                        <Col md={23}>Added By :{block.username}</Col>
+                    <Row>
+                      <Col md={23}>Added By :{block.username}</Col>
+                      {block.user ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id ? (
                         <Col md={1}>
-                          <Button onClick={() => {}}>Delete</Button>
+                          <Button
+                            onClick={() => {
+                              handleDeleteBlock(block.id);
+                            }}
+                          >
+                            Delete
+                          </Button>
                         </Col>
-                      </Row>
-                    ) : (
-                      ""
-                    )}
+                      ) : (
+                        ""
+                      )}
+                    </Row>
                   </CardHeader>
                   <CardBody>
                     <iframe
@@ -305,6 +323,13 @@ const Workspace = () => {
     }
   };
   let container = [];
+  const handleDeleteBlock = (blockId) => {
+    setBlocks((prevBlocks) => {
+      const updatedBlocks = prevBlocks.filter((block) => block.id !== blockId);
+      socket.emit("block", updatedBlocks); // Emit the updated blocks after deletion
+      return updatedBlocks;
+    });
+  };
   const handleAddBlock = () => {
     const newBlock = {
       user: JSON.parse(localStorage.getItem("userAuth"))._id,
@@ -343,7 +368,7 @@ const Workspace = () => {
     getRoomDetails();
 
     //socket.on("block", blocks);
-  }, []);
+  });
 
   // Function to add a new component block
   const addComponent = (type) => {
@@ -496,7 +521,7 @@ const Workspace = () => {
         setBase64PDF={setBase64PDF}
       />
       <br></br>
-      <BlockDisplay blocks={blocks} />
+      <BlockDisplay blocks={blocks} handleDeleteBlock={handleDeleteBlock} />
     </Fragment>
   );
 };
