@@ -83,9 +83,10 @@ io.on("connect", (socket) => {
   //update blocks
   socket.on("block", (block) => {
     //broadcast to all users
+    blocks = block;
     connections.forEach((con) => {
       if (con.id !== socket.id) {
-        con.emit("block", block);
+        con.emit("block", blocks);
       }
     });
   });

@@ -13,6 +13,7 @@ import socket from "../../Socket";
 import { useWebSocket, WebSocketProvider } from "../../Socket/WebSocketContext";
 import { socket_api } from "../../../Constant";
 import axios from "axios";
+import { Card, CardBody, CardHeader } from "reactstrap";
 
 //UI Component for add new blocks
 const BlockEditor = ({
@@ -117,68 +118,78 @@ const BlockDisplay = ({ blocks }) => {
           <div key={block.id} className="block">
             {block.type === "notepad" ? (
               <div>
-                {block.user ===
-                JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                  <div>
-                    <Row>
-                      <Col md={23}></Col>
-                      <Col md={1}>
-                        <Button onClick={() => {}}>Delete</Button>
-                      </Col>
-                    </Row>
-                    <br></br>
-                  </div>
-                ) : (
-                  ""
-                )}
-
-                <div className="notepad">{block.content}</div>
+                <Card>
+                  <CardHeader style={{ paddingBottom: -10 }}>
+                    {block.user ===
+                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                      <Row>
+                        <Col md={23}>Added By :{block.username}</Col>
+                        <Col md={1}>
+                          <Button onClick={() => {}}>Delete</Button>
+                        </Col>
+                      </Row>
+                    ) : (
+                      ""
+                    )}
+                  </CardHeader>
+                  <CardBody>
+                    <div className="notepad">{block.content}</div>
+                  </CardBody>
+                </Card>
               </div>
             ) : block.type === "image" ? (
               <div>
-                {block.user ===
-                JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                  <div>
-                    <Row>
-                      <Col md={23}></Col>
-                      <Col md={1}>
-                        <Button onClick={() => {}}>Delete</Button>
-                      </Col>
-                    </Row>
-                    <br></br>
-                  </div>
-                ) : (
-                  ""
-                )}
-
-                <div className="image">
-                  <img src={block.content} alt="user uploaded" />
-                </div>
+                <Card>
+                  <CardHeader style={{ paddingBottom: -10 }}>
+                    {block.user ===
+                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                      <Row>
+                        <Col md={23}>Added By :{block.username}</Col>
+                        <Col md={1}>
+                          <Button onClick={() => {}}>Delete</Button>
+                        </Col>
+                      </Row>
+                    ) : (
+                      ""
+                    )}
+                  </CardHeader>
+                  <CardBody>
+                    <div>
+                      <img
+                        src={block.content}
+                        alt="user uploaded"
+                        width={"100%"}
+                      />
+                    </div>
+                  </CardBody>
+                </Card>
               </div>
             ) : block.type === "pdf" ? (
               <div>
-                {block.user ===
-                JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                  <div>
-                    <Row>
-                      <Col md={23}></Col>
-                      <Col md={1}>
-                        <Button onClick={() => {}}>Delete</Button>
-                      </Col>
-                    </Row>
-                    <br></br>
-                  </div>
-                ) : (
-                  ""
-                )}
-
-                <iframe
-                  src={block.content}
-                  title="PDF Document"
-                  width="100%"
-                  height="600px"
-                  style={{ border: "1px solid #ccc" }}
-                ></iframe>
+                <Card>
+                  <CardHeader style={{ paddingBottom: -10 }}>
+                    {block.user ===
+                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                      <Row>
+                        <Col md={23}>Added By :{block.username}</Col>
+                        <Col md={1}>
+                          <Button onClick={() => {}}>Delete</Button>
+                        </Col>
+                      </Row>
+                    ) : (
+                      ""
+                    )}
+                  </CardHeader>
+                  <CardBody>
+                    <iframe
+                      src={block.content}
+                      title="PDF Document"
+                      width="100%"
+                      height="600px"
+                      style={{ border: "1px solid #ccc" }}
+                    ></iframe>
+                  </CardBody>
+                </Card>
               </div>
             ) : (
               ""
@@ -194,7 +205,7 @@ const Workspace = () => {
   const [components, setComponents] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [blocks, setBlocks] = useState([]);
-  const container = [];
+
   const [base64Image, setBase64Image] = useState("");
   const [imageName, setImageName] = useState("");
   const [blockType, setBlockType] = useState("notepad");
@@ -293,32 +304,46 @@ const Workspace = () => {
       reader.readAsDataURL(file);
     }
   };
+  let container = [];
   const handleAddBlock = () => {
     const newBlock = {
       user: JSON.parse(localStorage.getItem("userAuth"))._id,
+      username:
+        JSON.parse(localStorage.getItem("userAuth")).fName +
+        " " +
+        JSON.parse(localStorage.getItem("userAuth")).lName,
       id: uuidv4(),
       type: blockType,
       content,
     };
-    container.push(newBlock);
-    setBlocks((prevBlocks) => [...prevBlocks, newBlock]);
+    // container.push(newBlock);
+    // console.log("container", container);
+    setBlocks((prevContainer) => {
+      const updatedContainer = [...prevContainer, newBlock];
+      // setBlocks(updatedContainer); // Update blocks with the same array
+      socket.emit("block", updatedContainer); // Emit the updated container
+      return updatedContainer;
+    });
+    //console.log("container", container);
+    // setBlocks((prevBlocks) => [...prevBlocks, newBlock]);
     //setBlocks(container);
-    console.log("clock", blocks);
+
     setContent("");
 
-    socket.emit("block", blocks);
+    // socket.emit("block", blocks);
     updateBlockCount();
   };
 
   // Establish WebSocket connection and handle incoming messages
   useEffect(() => {
-    getRoomDetails();
-    socket.on("block", (bl) => {
-      console.log(bl);
-      setBlocks(bl);
+    socket.on("block", (block) => {
+      console.log("amo amo", block);
+      setBlocks(block);
     });
+    getRoomDetails();
+
     //socket.on("block", blocks);
-  }, [blocks]);
+  }, []);
 
   // Function to add a new component block
   const addComponent = (type) => {
