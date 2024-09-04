@@ -33,21 +33,21 @@ const LayoutRoutes = () => {
       setElements(elementsCopy.elements);
     });
     socket.on("text", (data) => {
-      console.log("d", data);
+      // console.log("d", data);
 
       setInx(data);
     });
 
     // Event listener for 'fileList' event received from the server
     socket.on("fileList", (data) => {
-      // Update state with received file names
+      // console.log("fielist", data);
       setFileNames(data);
     });
 
     return () => {
       socket.disconnect();
     };
-  }, []);
+  });
   return (
     <>
       <Routes>

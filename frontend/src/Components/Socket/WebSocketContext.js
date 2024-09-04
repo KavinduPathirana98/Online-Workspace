@@ -25,7 +25,7 @@ export const WebSocketProvider = ({ children }) => {
   }, []);
 
   const addBlock = (block) => {
-    console.log(block);
+    // console.log(block);
     socket.emit("newBlock", block); // Send 'newBlock' event
   };
 

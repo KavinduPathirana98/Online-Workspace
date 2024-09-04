@@ -55,7 +55,7 @@ const getFileNames = (id) => {
       if (err) {
         reject(err);
       } else {
-        //console.log(files);
+        console.log(files);
         resolve(files);
       }
     });
@@ -171,11 +171,12 @@ app.post("/upload/:dir", upload.single("file"), (req, res) => {
 });
 
 // File download endpoint
-app.get("/download/", (req, res) => {
+app.get("/download/:dir/", (req, res) => {
+  const dir = req.params.dir;
   const fileName = req.query.fileName;
   // const fileName = req.params.fileName;
   // console.log(fileName);
-  const filePath = path.join(__dirname, "uploads/", fileName);
+  const filePath = path.join(__dirname, "uploads/" + dir + "/", fileName);
 
   // Check if the file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {

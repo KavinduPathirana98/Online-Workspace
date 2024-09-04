@@ -55,9 +55,13 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
     try {
       // const fileName = "example.txt"; // Change to the file name you want to download
       const response = await axios
-        .get(socket_api + `download/?fileName=${file}`, {
-          responseType: "blob", // Specify that you expect a blob response
-        })
+        .get(
+          socket_api +
+            `download/${localStorage.getItem("room")}/?fileName=${file}`,
+          {
+            responseType: "blob", // Specify that you expect a blob response
+          }
+        )
         .then((response) => {
           const blob = new Blob([response.data]); // Access response data to create a blob
           const url = window.URL.createObjectURL(blob);

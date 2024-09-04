@@ -51,14 +51,18 @@ const Routers = () => {
                     exact
                     path={`${process.env.PUBLIC_URL}`}
                     element={
-                      <Navigate to={`${process.env.PUBLIC_URL}/pages/home/`} />
+                      <Navigate
+                        to={`${process.env.PUBLIC_URL}/pages/white-board/`}
+                      />
                     }
                   />
                   <Route
                     exact
                     path={`/`}
                     element={
-                      <Navigate to={`${process.env.PUBLIC_URL}/pages/home/`} />
+                      <Navigate
+                        to={`${process.env.PUBLIC_URL}/pages/white-board/`}
+                      />
                     }
                   />
                 </>

@@ -12,7 +12,7 @@ const Sample = () => {
   // let ui = [];
 
   const onc = (v) => {
-    console.log(v);
+    //console.log(v);
     let x = ui;
     if (v == 1) {
       const newItem = <NotePad />;
@@ -23,7 +23,7 @@ const Sample = () => {
     } else if (v == 3) {
     }
 
-    console.log(ui);
+    // console.log(ui);
   };
   return (
     <Fragment>
