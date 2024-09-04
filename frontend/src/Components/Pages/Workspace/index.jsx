@@ -33,6 +33,33 @@ const BlockEditor = ({
   base64PDF,
   setBase64PDF,
 }) => {
+  const styles = {
+    uploadContainer: {
+      border: "2px solid black",
+      width: "400px",
+      height: "150px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      cursor: "pointer",
+      position: "relative",
+    },
+    fileInput: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      width: "100%",
+      height: "100%",
+      opacity: 0,
+      cursor: "pointer",
+    },
+    text: {
+      zIndex: 1,
+    },
+  };
+
   return (
     <div className="block-editor">
       {blockType === "notepad" ? (
@@ -409,8 +436,9 @@ const Workspace = () => {
   return (
     <Fragment>
       <br></br>
+      <br></br>
       <Button type="primary" onClick={() => setModal(true)}>
-        Open Modal
+        Select Block Type
       </Button>
       <br></br>
       <Modal
