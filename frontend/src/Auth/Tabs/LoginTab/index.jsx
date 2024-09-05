@@ -45,7 +45,7 @@ const LoginTab = ({ selected }) => {
           localStorage.setItem("token", Jwt_token);
           localStorage.setItem("login", JSON.stringify(true));
           localStorage.setItem("authenticated", true);
-          navigate("/cuba-context/pages/white-board/");
+          navigate("/cuba-context/analytics/home/");
         }
       })
       .catch((err) => {});

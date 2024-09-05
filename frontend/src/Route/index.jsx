@@ -52,7 +52,7 @@ const Routers = () => {
                     path={`${process.env.PUBLIC_URL}`}
                     element={
                       <Navigate
-                        to={`${process.env.PUBLIC_URL}/pages/white-board/`}
+                        to={`${process.env.PUBLIC_URL}/analytics/home/`}
                       />
                     }
                   />
@@ -61,7 +61,7 @@ const Routers = () => {
                     path={`/`}
                     element={
                       <Navigate
-                        to={`${process.env.PUBLIC_URL}/pages/white-board/`}
+                        to={`${process.env.PUBLIC_URL}/analytics/home/`}
                       />
                     }
                   />

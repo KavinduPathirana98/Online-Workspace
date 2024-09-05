@@ -65,8 +65,8 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
           onMouseDown={startDragging}
           style={{
             position: "fixed",
-            width: "300px",
-            height: "200px",
+            width: "400px",
+            height: "400px",
             bottom: "10px",
             right: "10px",
             border: "1px solid #ccc",

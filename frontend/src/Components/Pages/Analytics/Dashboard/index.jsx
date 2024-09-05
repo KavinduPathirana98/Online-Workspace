@@ -13,6 +13,8 @@ const Dashboard = () => {
   const [room, setRoom] = useState("");
   const [totalActive, setTotalActive] = useState(0);
   const [totalContribution, setTotalContribution] = useState(0);
+  const workspaceName = JSON.parse(localStorage.getItem("roomDetails"))[0]
+    .roomName;
   console.log(totalActive);
   console.log(totalContribution);
   const getRoomDetails = async () => {
@@ -53,7 +55,7 @@ const Dashboard = () => {
               <Col>
                 <Card>
                   <CardHeader>
-                    <H5>{"Workspace Progress"}</H5>
+                    <H5>{"Workspace Progress  (" + workspaceName + ")"}</H5>
                     <span>{`${item.user.fName} ${item.user.lName}`}</span>
                   </CardHeader>
                   <br></br>
@@ -61,6 +63,10 @@ const Dashboard = () => {
                     <div>
                       <Row>
                         <Col md={6}>
+                          <div style={{ fontWeight: "bolder" }}>
+                            Online Contribution
+                          </div>
+                          <br></br>
                           <div
                           //   style={{ height: "50%", width: "50%" }}
                           >
@@ -83,15 +89,11 @@ const Dashboard = () => {
                           </div>
                         </Col>
                         <Col md={6}>
-                          <div
-                            style={
-                              {
-                                // height: "50%",
-                                // width: "50%",
-                                //marginLeft: "-50%",
-                              }
-                            }
-                          >
+                          <div style={{ fontWeight: "bolder" }}>
+                            Working Contribution
+                          </div>
+                          <br></br>
+                          <div>
                             <CircularProgressbar
                               styles={buildStyles({
                                 textColor: "#CF09ED",

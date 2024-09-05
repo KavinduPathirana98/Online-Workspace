@@ -12,6 +12,7 @@ const LayoutRoutes = () => {
   const [elements, setElements] = useState([]);
   const [fileNames, setFileNames] = useState([]);
   const [inx, setInx] = useState("");
+  const [blocks, setBlocks] = useState([]);
   useEffect(() => {
     // const server = socket_api;
     // const connectionOptions = {
@@ -37,6 +38,10 @@ const LayoutRoutes = () => {
 
       setInx(data);
     });
+    socket.on("block", (block) => {
+      console.log("amo amo", block);
+      setBlocks(block);
+    });
 
     // Event listener for 'fileList' event received from the server
     socket.on("fileList", (data) => {
@@ -44,9 +49,9 @@ const LayoutRoutes = () => {
       setFileNames(data);
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    // return () => {
+    //   socket.disconnect();
+    // };
   });
   return (
     <>
@@ -65,6 +70,8 @@ const LayoutRoutes = () => {
                     setFileNames={setFileNames}
                     inx={inx}
                     setInx={setInx}
+                    blocks={blocks}
+                    setBlocks={setBlocks}
                   />
                 }
               />

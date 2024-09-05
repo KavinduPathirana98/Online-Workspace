@@ -148,7 +148,9 @@ const BlockDisplay = ({ blocks, handleDeleteBlock }) => {
                 <Card>
                   <CardHeader style={{ paddingBottom: -10 }}>
                     <Row>
-                      <Col md={23}>Added By :{block.username}</Col>
+                      <Col md={23} style={{ fontWeight: "bolder" }}>
+                        Added By :{block.username}
+                      </Col>
                       {block.user ===
                       JSON.parse(localStorage.getItem("userAuth"))._id ? (
                         <Col md={1}>
@@ -175,7 +177,9 @@ const BlockDisplay = ({ blocks, handleDeleteBlock }) => {
                 <Card>
                   <CardHeader style={{ paddingBottom: -10 }}>
                     <Row>
-                      <Col md={23}>Added By :{block.username}</Col>
+                      <Col md={23} style={{ fontWeight: "bolder" }}>
+                        Added By :{block.username}
+                      </Col>
                       {block.user ===
                       JSON.parse(localStorage.getItem("userAuth"))._id ? (
                         <Col md={1}>
@@ -193,11 +197,12 @@ const BlockDisplay = ({ blocks, handleDeleteBlock }) => {
                     </Row>
                   </CardHeader>
                   <CardBody>
-                    <div>
+                    <div style={{ textAlign: "center" }}>
                       <img
                         src={block.content}
                         alt="user uploaded"
-                        width={"100%"}
+                        width={"60%"}
+                        height={"60%"}
                       />
                     </div>
                   </CardBody>
@@ -208,7 +213,9 @@ const BlockDisplay = ({ blocks, handleDeleteBlock }) => {
                 <Card>
                   <CardHeader style={{ paddingBottom: -10 }}>
                     <Row>
-                      <Col md={23}>Added By :{block.username}</Col>
+                      <Col md={23} style={{ fontWeight: "bolder" }}>
+                        Added By :{block.username}
+                      </Col>
                       {block.user ===
                       JSON.parse(localStorage.getItem("userAuth"))._id ? (
                         <Col md={1}>
@@ -245,11 +252,10 @@ const BlockDisplay = ({ blocks, handleDeleteBlock }) => {
   );
 };
 //Main Component Workspace
-const Workspace = () => {
+const Workspace = ({ blocks, setBlocks }) => {
   const [modal, setModal] = useState(false);
   const [components, setComponents] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [blocks, setBlocks] = useState([]);
 
   const [base64Image, setBase64Image] = useState("");
   const [imageName, setImageName] = useState("");
@@ -388,10 +394,6 @@ const Workspace = () => {
 
   // Establish WebSocket connection and handle incoming messages
   useEffect(() => {
-    socket.on("block", (block) => {
-      console.log("amo amo", block);
-      setBlocks(block);
-    });
     getRoomDetails();
 
     //socket.on("block", blocks);

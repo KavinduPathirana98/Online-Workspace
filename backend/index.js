@@ -93,6 +93,7 @@ io.on("connect", (socket) => {
 
   //to emit updates from notepad
   socket.on("text", (data) => {
+    console.log("text", data);
     // Broadcast text data to all connected clients except the sender
     connections.forEach((con) => {
       if (con.id !== socket.id) {
@@ -116,6 +117,7 @@ io.on("connect", (socket) => {
 
   //to emit updates from whiteboard
   socket.on("elements", (data) => {
+    console.log(data);
     // Broadcast elements data to all connected clients except the sender
     connections.forEach((con) => {
       if (con.id !== socket.id) {
@@ -142,19 +144,19 @@ io.on("connect", (socket) => {
     });
   });
   //user joined message (calling option)
-  socket.on("sendingSignal", (payload) => {
-    io.to(payload.userToSignal).emit("userJoined", {
-      signal: payload.signal,
-      callerID: payload.callerID,
-    });
-  });
+  // socket.on("sendingSignal", (payload) => {
+  //   io.to(payload.userToSignal).emit("userJoined", {
+  //     signal: payload.signal,
+  //     callerID: payload.callerID,
+  //   });
+  // });
 
-  socket.on("returningSignal", (payload) => {
-    io.to(payload.callerID).emit("receivingReturnedSignal", {
-      signal: payload.signal,
-      id: socket.id,
-    });
-  });
+  // socket.on("returningSignal", (payload) => {
+  //   io.to(payload.callerID).emit("receivingReturnedSignal", {
+  //     signal: payload.signal,
+  //     id: socket.id,
+  //   });
+  // });
 });
 
 //End Points
