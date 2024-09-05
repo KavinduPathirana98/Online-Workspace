@@ -86,29 +86,31 @@ const AppLayout = ({ children, classNames, ...rest }) => {
             {
               onlineTime:
                 Number(
-                  localStorage.getItem("roomDetails") &&
-                    JSON.parse(
-                      localStorage.getItem("roomDetails")
-                    )[0].users.filter(
-                      (user) =>
-                        user.user ===
-                        JSON.parse(localStorage.getItem("userAuth"))._id
-                    )[0] &&
-                    JSON.parse(
-                      localStorage.getItem("roomDetails")
-                    )[0].users.filter(
-                      (user) =>
-                        user.user._id ===
-                        JSON.parse(localStorage.getItem("userAuth"))._id
-                    )[0].onlineTime == null
-                    ? 1
-                    : JSON.parse(
+                  localStorage.getItem("roomDetails")
+                    ? localStorage.getItem("roomDetails") &&
+                      JSON.parse(
+                        localStorage.getItem("roomDetails")
+                      )[0].users.filter(
+                        (user) =>
+                          user.user ===
+                          JSON.parse(localStorage.getItem("userAuth"))._id
+                      )[0] &&
+                      JSON.parse(
                         localStorage.getItem("roomDetails")
                       )[0].users.filter(
                         (user) =>
                           user.user._id ===
                           JSON.parse(localStorage.getItem("userAuth"))._id
-                      )[0].onlineTime
+                      )[0].onlineTime == null
+                      ? 1
+                      : JSON.parse(
+                          localStorage.getItem("roomDetails")
+                        )[0].users.filter(
+                          (user) =>
+                            user.user._id ===
+                            JSON.parse(localStorage.getItem("userAuth"))._id
+                        )[0].onlineTime
+                    : 0
                 ) + 1,
             }
           )
