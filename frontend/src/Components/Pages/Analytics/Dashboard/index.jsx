@@ -13,10 +13,9 @@ const Dashboard = () => {
   const [room, setRoom] = useState("");
   const [totalActive, setTotalActive] = useState(0);
   const [totalContribution, setTotalContribution] = useState(0);
-  const workspaceName = JSON.parse(localStorage.getItem("roomDetails"))[0]
-    .roomName;
-  console.log(totalActive);
-  console.log(totalContribution);
+  // const workspaceName = JSON.parse(localStorage.getItem("roomDetails"))[0]
+  //   .roomName;
+
   const getRoomDetails = async () => {
     try {
       axios
@@ -55,7 +54,12 @@ const Dashboard = () => {
               <Col>
                 <Card>
                   <CardHeader>
-                    <H5>{"Workspace Progress  (" + workspaceName + ")"}</H5>
+                    <H5>
+                      {"Workspace Progress  (" +
+                        JSON.parse(localStorage.getItem("roomDetails"))[0]
+                          .roomName +
+                        ")"}
+                    </H5>
                     <span>{`${item.user.fName} ${item.user.lName}`}</span>
                   </CardHeader>
                   <br></br>

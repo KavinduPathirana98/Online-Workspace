@@ -57,7 +57,7 @@ const Leftbar = () => {
 
   return (
     <Fragment>
-      {/* <Col className="header-logo-wrapper col-auto p-0" id="out_side_click">
+      <Col className="header-logo-wrapper col-auto p-0" id="out_side_click">
         <div className="logo-wrapper">
           <Link to={`${process.env.PUBLIC_URL}/pages/sample-page/${layoutURL}`}>
             <Image
@@ -91,9 +91,18 @@ const Leftbar = () => {
           />
         </div>
       </Col>
-      <Col xxl="5" xl="6" lg="5" md="4" sm="3" className="left-header p-0">
-       
-      </Col> */}
+      <Col
+        xxl="5"
+        xl="6"
+        lg="5"
+        md="4"
+        sm="3"
+        className="left-header p-0"
+        style={{ marginBottom: "-50px", fontWeight: "bolder" }}
+      >
+        {localStorage.getItem("roomDetails") &&
+          JSON.parse(localStorage.getItem("roomDetails"))[0].roomName}
+      </Col>
     </Fragment>
   );
 };

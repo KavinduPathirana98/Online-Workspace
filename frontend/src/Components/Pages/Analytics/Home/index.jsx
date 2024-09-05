@@ -62,7 +62,28 @@ const Home = () => {
       setModal(false);
     }
   };
-
+  // const getRoomDetails = async (room) => {
+  //   try {
+  //     axios.get(socket_api + `api/room/get/${room}`).then((response) => {
+  //       let online = 0;
+  //       let count = 0;
+  //       console.log(response.data.data);
+  //       response.data.data &&
+  //         response.data.data[0].users &&
+  //         response.data.data[0].users.map((item) => {
+  //           console.log(item);
+  //           online = online + item.onlineTime;
+  //           count = count + item.blockCount;
+  //         });
+  //       console.log(online, count);
+  //       setTotalActive(online);
+  //       setTotalContribution(count);
+  //       setRoom(response.data.data);
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   const [allUsers, setAllUsers] = useState([]);
   //get all users for add into group
   const getallUsers = async () => {
@@ -165,6 +186,7 @@ const Home = () => {
                   JSON.stringify(response.data.data)
                 );
               });
+            //getRoomDetails(roomID);
           },
           function (dismiss) {
             // dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'
