@@ -1,8 +1,8 @@
 import { Button, Col, Row } from "antd";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import rough from "roughjs/bundled/rough.esm.js";
 import socket from "../../Socket";
-
+import { throttle } from "lodash";
 const generator = rough.generator();
 
 const WhiteBoard = ({ elements, setElements }) => {
@@ -12,11 +12,6 @@ const WhiteBoard = ({ elements, setElements }) => {
   const [points, setPoints] = useState([]); // For pencil tool
   const [polygonPoints, setPolygonPoints] = useState([]); // For polygon tool
   const [undoStack, setUndoStack] = useState([]);
-
-  useEffect(() => {
-    // Socket setup (if needed)
-    // Cleanup function to disconnect socket on unmount
-  }, []);
 
   useLayoutEffect(() => {
     const canvas = document.getElementById("canvas");
@@ -204,127 +199,180 @@ const WhiteBoard = ({ elements, setElements }) => {
     setElements(previousElements);
     socket.emit("elements", previousElements);
   };
-
+  const Username =
+    localStorage.getItem("userAuth") &&
+    JSON.parse(localStorage.getItem("userAuth")).fName +
+      " " +
+      JSON.parse(localStorage.getItem("userAuth")).lName;
   const pushUndoStack = (elements) => {
     setUndoStack((prevStack) => [...prevStack, [...elements]]);
   };
+  const [mousePositions, setMousePositions] = useState({});
+  const handleMouseMovePerson = throttle((e) => {
+    const x = e.clientX;
+    const y = e.clientY;
+    socket.emit("down", { x, y, email: Username });
+  }, 50); // Update every 50ms
+  const cursorRefs = useRef({});
 
   useEffect(() => {
-    // Push current elements to undo stack whenever elements change
-    pushUndoStack(elements);
-  }, [elements]);
+    socket.on("ondown", (data) => {
+      if (!cursorRefs.current[data.email]) {
+        const cursor = document.createElement("div");
+        cursor.style.position = "absolute";
+        cursor.style.backgroundColor = "blue";
+        cursor.style.color = "white";
+        cursor.style.padding = "2px 5px";
+        cursor.style.borderRadius = "3px";
+        cursor.style.transform = "translate(-50%, -50%)";
+        cursor.style.zIndex = 10000;
+        cursor.innerHTML = data.email;
+        cursorRefs.current[data.email] = cursor;
+        document.body.appendChild(cursor);
+      }
+      const cursor = cursorRefs.current[data.email];
+      cursor.style.left = `${data.x}px`;
+      cursor.style.top = `${data.y}px`;
+    });
+  }, [elements, mousePositions]);
 
   return (
-    <div className="container">
-      <Row>
-        <Col md={24}>
-          <Row>
-            <Col>
-              <Button
-                name="tool"
-                id="selection"
-                className="mt-1"
-                onClick={() => setTool("selection")}
-              >
-                Drag N Drop
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                name="tool"
-                id="rect"
-                className="mt-1"
-                onClick={() => setTool("rect")}
-              >
-                Rectangle
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="line"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("line")}
-              >
-                Line
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="circle"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("circle")}
-              >
-                Circle
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="triangle"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("triangle")}
-              >
-                Triangle
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="ellipse"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("ellipse")}
-              >
-                Ellipse
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="pencil"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("pencil")}
-              >
-                Pencil
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="polygon"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("polygon")}
-              >
-                Polygon
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                id="eraser"
-                name="tool"
-                className="mt-1"
-                onClick={() => setTool("eraser")}
-              >
-                Eraser
-              </Button>
-            </Col>
-            {/* <Col>
+    <div
+      onMouseMove={handleMouseMovePerson}
+      style={{ position: "relative", width: "100%", height: "100vh" }}
+    >
+      {Object.keys(mousePositions).map((email) => {
+        const pos = mousePositions[email];
+        return (
+          <div
+            key={email}
+            style={{
+              position: "absolute",
+              left: pos.x,
+              top: pos.y,
+              backgroundColor: "blue",
+              color: "white",
+              padding: "2px 5px",
+              borderRadius: "3px",
+              transform: "translate(-50%, -50%)",
+              zIndex: 10000,
+            }}
+          >
+            {email}
+          </div>
+        );
+      })}
+      <div className="container">
+        <Row>
+          <Col md={24}>
+            <Row>
+              <Col>
+                <Button
+                  name="tool"
+                  id="selection"
+                  className="mt-1"
+                  onClick={() => setTool("selection")}
+                >
+                  Drag N Drop
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  name="tool"
+                  id="rect"
+                  className="mt-1"
+                  onClick={() => setTool("rect")}
+                >
+                  Rectangle
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="line"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("line")}
+                >
+                  Line
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="circle"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("circle")}
+                >
+                  Circle
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="triangle"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("triangle")}
+                >
+                  Triangle
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="ellipse"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("ellipse")}
+                >
+                  Ellipse
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="pencil"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("pencil")}
+                >
+                  Pencil
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="polygon"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("polygon")}
+                >
+                  Polygon
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  id="eraser"
+                  name="tool"
+                  className="mt-1"
+                  onClick={() => setTool("eraser")}
+                >
+                  Eraser
+                </Button>
+              </Col>
+              {/* <Col>
               <Button id="undo" name="tool" className="mt-1" onClick={undo}>
                 Undo
               </Button>
             </Col> */}
-          </Row>
-        </Col>
-      </Row>
-      <canvas
-        id="canvas"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        width={window.innerWidth}
-        height={window.innerHeight}
-      ></canvas>
+            </Row>
+          </Col>
+        </Row>
+        <canvas
+          id="canvas"
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          width={window.innerWidth}
+          height={window.innerHeight}
+        ></canvas>
+      </div>
     </div>
   );
 };

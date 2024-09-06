@@ -32,8 +32,14 @@ const Home = () => {
   const [form] = Form.useForm();
   const [formSettings] = Form.useForm();
   const socketRef = useRef(null);
-  const userID = JSON.parse(localStorage.getItem("userAuth"))._id;
-  const Username = JSON.parse(localStorage.getItem("userAuth")).email;
+  const userID =
+    localStorage.getItem("userAuth") &&
+    JSON.parse(localStorage.getItem("userAuth"))._id;
+  const Username =
+    localStorage.getItem("userAuth") &&
+    JSON.parse(localStorage.getItem("userAuth")).fName +
+      " " +
+      JSON.parse(localStorage.getItem("userAuth")).lName;
 
   const createWorkspace = async () => {
     try {
@@ -240,7 +246,7 @@ const Home = () => {
     });
 
     return () => {
-      socket.off("ondown");
+      //socket.off("ondown");
     };
   }, []);
 

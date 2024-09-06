@@ -55,7 +55,6 @@ const getFileNames = (id) => {
       if (err) {
         reject(err);
       } else {
-        console.log(files);
         resolve(files);
       }
     });
@@ -93,7 +92,6 @@ io.on("connect", (socket) => {
 
   //to emit updates from notepad
   socket.on("text", (data) => {
-    console.log("text", data);
     // Broadcast text data to all connected clients except the sender
     connections.forEach((con) => {
       if (con.id !== socket.id) {
@@ -117,7 +115,6 @@ io.on("connect", (socket) => {
 
   //to emit updates from whiteboard
   socket.on("elements", (data) => {
-    console.log(data);
     // Broadcast elements data to all connected clients except the sender
     connections.forEach((con) => {
       if (con.id !== socket.id) {
@@ -177,7 +174,7 @@ app.get("/download/:dir/", (req, res) => {
   const dir = req.params.dir;
   const fileName = req.query.fileName;
   // const fileName = req.params.fileName;
-  // console.log(fileName);
+
   const filePath = path.join(__dirname, "uploads/" + dir + "/", fileName);
 
   // Check if the file exists
