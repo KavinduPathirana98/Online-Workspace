@@ -36,6 +36,10 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
     setMeetingStarted(true);
   };
 
+  const closeMeeting = () => {
+    setMeetingStarted(false); // Stops the meeting
+  };
+
   const user =
     JSON.parse(localStorage.getItem("userAuth")).fName +
     " " +
@@ -43,21 +47,6 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
 
   return (
     <div>
-      {/* Button to start the meeting */}
-      {/* {!meetingStarted && (
-        <li>
-          <div
-            //className={`mode ${moonlight && "active"}`}
-            onClick={() => startMeeting()}
-          >
-            <SvgIcon iconId={"stroke-chat"} />
-          </div>
-        </li>
-        // <button onClick={startMeeting} style={{ marginBottom: "10px" }}>
-        //   Start Meeting
-        // </button>
-      )} */}
-
       {/* Conditionally render the JitsiMeeting component */}
       {meetingStarted && (
         <div
@@ -75,6 +64,29 @@ const JitsiMeetingComponent = ({ meetingStarted, setMeetingStarted }) => {
             backgroundColor: "white",
           }}
         >
+          {/* Close button */}
+          <div
+            style={{
+              position: "absolute",
+              top: "5px",
+              right: "5px",
+              cursor: "pointer",
+              backgroundColor: "red",
+              color: "white",
+              borderRadius: "50%",
+              width: "25px",
+              height: "25px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontWeight: "bold",
+              zIndex: 1001,
+            }}
+            onClick={closeMeeting}
+          >
+            X
+          </div>
+
           <JitsiMeeting
             domain="meet.jit.si"
             roomName={localStorage.getItem("room")}

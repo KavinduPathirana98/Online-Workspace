@@ -87,17 +87,22 @@ const Home = () => {
   const [allUsers, setAllUsers] = useState([]);
   //get all users for add into group
   const getallUsers = async () => {
-    await axios.get(socket_api + "api/user/", {}).then((response) => {
-      if (response.data.code === 1) {
-        const data = response.data.data.map((item) => {
-          return {
-            label: item.fName + " " + item.lName,
-            value: item._id,
-          };
-        });
-        setAllUsers(data);
-      }
-    });
+    await axios
+      .get(socket_api + "api/user/", {})
+      .then((response) => {
+        if (response.data.code === 1) {
+          const data = response.data.data.map((item) => {
+            return {
+              label: item.fName + " " + item.lName,
+              value: item._id,
+            };
+          });
+          setAllUsers(data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   //update group users function
   const updateGroupUsers = async () => {
@@ -185,6 +190,9 @@ const Home = () => {
                   "roomDetails",
                   JSON.stringify(response.data.data)
                 );
+              })
+              .catch((err) => {
+                console.log(err);
               });
             //getRoomDetails(roomID);
           },
@@ -305,14 +313,14 @@ const Home = () => {
           <ModalBody>
             <Form form={form}>
               <Row>
-                <Col md={11}>
+                {/* <Col md={11}>
                   <FormGroup>
                     <Label>Workspace ID</Label>
                     <Form.Item name={"roomID"}>
                       <Input disabled type="text" maxLength={20} />
                     </Form.Item>
                   </FormGroup>
-                </Col>
+                </Col> */}
                 <Col md={11}>
                   <FormGroup>
                     <Label>Nick Name</Label>

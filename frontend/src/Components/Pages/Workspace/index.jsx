@@ -337,6 +337,9 @@ const Workspace = ({ blocks, setBlocks }) => {
       )
       .then((response) => {
         getRoomDetails();
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
   const handleImageUpload = (e) => {

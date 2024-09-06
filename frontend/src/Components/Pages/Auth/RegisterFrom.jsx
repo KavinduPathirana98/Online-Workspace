@@ -37,7 +37,9 @@ const RegisterFrom = ({ logoClassMain }) => {
           toast.success(response.data.msg);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

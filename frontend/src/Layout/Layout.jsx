@@ -84,41 +84,43 @@ const AppLayout = ({ children, classNames, ...rest }) => {
                 JSON.parse(localStorage.getItem("userAuth"))._id
               }`,
             {
-              onlineTime:
-                Number(
-                  localStorage.getItem("roomDetails")
-                    ? localStorage.getItem("roomDetails") &&
-                      JSON.parse(
-                        localStorage.getItem("roomDetails")
-                      )[0].users.filter(
-                        (user) =>
-                          user.user ===
-                          JSON.parse(localStorage.getItem("userAuth"))._id
-                      )[0] &&
-                      JSON.parse(
-                        localStorage.getItem("roomDetails")
-                      )[0].users.filter(
-                        (user) =>
-                          user.user._id ===
-                          JSON.parse(localStorage.getItem("userAuth"))._id
-                      )[0].onlineTime == null
-                      ? 1
-                      : JSON.parse(
+              onlineTime: localStorage.getItem("roomDetails")
+                ? Number(
+                    localStorage.getItem("roomDetails")
+                      ? localStorage.getItem("roomDetails") &&
+                        JSON.parse(
+                          localStorage.getItem("roomDetails")
+                        )[0].users.filter(
+                          (user) =>
+                            user.user ===
+                            JSON.parse(localStorage.getItem("userAuth"))._id
+                        )[0] &&
+                        JSON.parse(
                           localStorage.getItem("roomDetails")
                         )[0].users.filter(
                           (user) =>
                             user.user._id ===
                             JSON.parse(localStorage.getItem("userAuth"))._id
-                        )[0].onlineTime
-                    : 0
-                ) + 1,
+                        )[0].onlineTime == null
+                        ? 1
+                        : JSON.parse(
+                            localStorage.getItem("roomDetails")
+                          )[0].users.filter(
+                            (user) =>
+                              user.user._id ===
+                              JSON.parse(localStorage.getItem("userAuth"))._id
+                          )[0].onlineTime
+                      : 0
+                  ) + 1
+                : 1,
             }
           )
           .then((response) => {
             if (response.data.code == 1) {
               getRoomDetails();
             }
-          });
+          })
+          .catch((err) => {});
       }
     }, 58000);
 
