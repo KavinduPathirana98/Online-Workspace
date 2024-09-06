@@ -192,37 +192,35 @@ app.get("/download/:dir/", (req, res) => {
     const fileStream = fs.createReadStream(filePath);
     fileStream.pipe(res);
   });
-  // Save input text to a local file (Notepad)
-  app.post("/save-text", (req, res) => {
-    const { text, filename, roomID } = req.body;
+});
+// Save input text to a local file (Notepad)
+app.post("/save-text", (req, res) => {
+  const { text, filename, roomID } = req.body;
 
-    // Ensure text and filename are provided
-    if (!text || !filename || roomID) {
-      return res
-        .status(400)
-        .json({ message: "Text and filename are required" });
+  // Ensure text and filename are provided
+  if (!text || !filename || !roomID) {
+    return res.status(400).json({ message: "Text and filename are required" });
+  }
+
+  // Define the file path
+  const filePath = path.join(
+    __dirname,
+    "uploads/" + roomID + "/",
+    `${filename}.txt`
+  );
+
+  // Create directory if it doesn't exist
+  // if (!fs.existsSync(path.join(__dirname, "notepad"))) {
+  //   fs.mkdirSync(path.join(__dirname, "notepad"));
+  // }
+
+  // Write the text to the file
+  fs.writeFile(filePath, text, (err) => {
+    if (err) {
+      console.error("Error writing to file:", err);
+      return res.status(500).json({ message: "Failed to save text" });
     }
-
-    // Define the file path
-    const filePath = path.join(
-      __dirname,
-      "uploads/" + roomID + "/",
-      `${filename}.txt`
-    );
-
-    // Create directory if it doesn't exist
-    // if (!fs.existsSync(path.join(__dirname, "notepad"))) {
-    //   fs.mkdirSync(path.join(__dirname, "notepad"));
-    // }
-
-    // Write the text to the file
-    fs.writeFile(filePath, text, (err) => {
-      if (err) {
-        console.error("Error writing to file:", err);
-        return res.status(500).json({ message: "Failed to save text" });
-      }
-      res.status(200).json({ message: "Text saved successfully", filePath });
-    });
+    res.status(200).json({ message: "Text saved successfully", filePath });
   });
 });
 //Database Connection Initialize
