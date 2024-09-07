@@ -126,6 +126,7 @@ const Home = () => {
           } else {
             toast.error("Error while updating group members");
           }
+          getAllWorkspaces();
         });
     } catch (err) {
       toast.error("Error while updating group members");
@@ -319,14 +320,14 @@ const Home = () => {
           <ModalBody>
             <Form form={form}>
               <Row>
-                {/* <Col md={11}>
-                  <FormGroup>
+                <Col md={11}>
+                  <FormGroup hidden={true}>
                     <Label>Workspace ID</Label>
                     <Form.Item name={"roomID"}>
                       <Input disabled type="text" maxLength={20} />
                     </Form.Item>
                   </FormGroup>
-                </Col> */}
+                </Col>
                 <Col md={11}>
                   <FormGroup>
                     <Label>Nick Name</Label>
@@ -368,7 +369,7 @@ const Home = () => {
             <Form form={form}>
               <Row>
                 <Col md={11}>
-                  <FormGroup>
+                  <FormGroup hidden={true}>
                     <Label>Workspace ID</Label>
                     <Form.Item name={"roomID"}>
                       <Input disabled type="text" maxLength={20} />

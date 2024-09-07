@@ -36,7 +36,9 @@ const AppLayout = ({ children, classNames, ...rest }) => {
     const y = e.clientY;
     socket.emit("down", { x, y, email: Username });
   };
-  const Username = JSON.parse(localStorage.getItem("userAuth")).email;
+  const Username =
+    localStorage.getItem("userAuth") &&
+    JSON.parse(localStorage.getItem("userAuth")).email;
   const [minutes, setMinutes] = useState(0);
   const [room, setRoom] = useState();
   const getRoomDetails = async () => {
