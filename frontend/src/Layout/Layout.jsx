@@ -51,6 +51,9 @@ const AppLayout = ({ children, classNames, ...rest }) => {
             JSON.stringify(response.data.data)
           );
           setRoom(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
         });
     } catch (err) {
       console.log(err);
@@ -127,7 +130,8 @@ const AppLayout = ({ children, classNames, ...rest }) => {
     }, 58000);
 
     // Cleanup the interval when the component is unmounted or before the next effect runs
-    return () => clearInterval(interval), socket.off("ondown");
+    return () => clearInterval(interval);
+    //  socket.off("ondown");
   }, []);
 
   return (

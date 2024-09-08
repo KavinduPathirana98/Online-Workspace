@@ -35,6 +35,9 @@ const Dashboard = () => {
           setTotalActive(online);
           setTotalContribution(count);
           setRoom(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
         });
     } catch (err) {
       console.log(err);
