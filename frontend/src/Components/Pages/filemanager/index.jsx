@@ -33,15 +33,16 @@ const FileManager = ({ socket, fileNames, setFileNames }) => {
     formData.append("file", selectedFile);
 
     try {
-      await axios.post(
-        socket_api + "upload/" + localStorage.getItem("room"),
-        formData,
-        {
+      await axios
+        .post(socket_api + "upload/" + localStorage.getItem("room"), formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
-      );
+        })
+        .then((response) => {})
+        .catch((err) => {
+          console.log(err);
+        });
       alert("File uploaded successfully");
     } catch (error) {
       console.error("Error uploading file:", error);

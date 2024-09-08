@@ -272,6 +272,9 @@ const Workspace = ({ blocks, setBlocks }) => {
             "roomDetails",
             JSON.stringify(response.data.data)
           );
+        })
+        .catch((error) => {
+          console.log(error);
         });
     } catch (err) {
       console.log(err);
