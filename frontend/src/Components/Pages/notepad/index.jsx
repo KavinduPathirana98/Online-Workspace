@@ -77,7 +77,7 @@ const NotePad = ({ inx, setInx }) => {
             </div>
             <div className="col-md-2">
               <label style={{ fontSize: "15px" }} className="mt-2">
-                Font
+                File Name
               </label>
             </div>
             <div className="col-md-4">

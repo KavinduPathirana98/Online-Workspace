@@ -36,6 +36,7 @@ router.get("/", async (req, res) => {
 //         console.log(err);
 //       });
 //   });
+
 //Register User (Save)
 router.post("/register", async (req, res) => {
   try {

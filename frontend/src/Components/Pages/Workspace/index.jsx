@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import JitsiMeetingComponent from "../Meet";
 import SvgIcon from "../../Common/Component/SvgIcon";
 import socket from "../../Socket";
-import { useWebSocket, WebSocketProvider } from "../../Socket/WebSocketContext";
+// import { useWebSocket, WebSocketProvider } from "../../Socket/WebSocketContext";
 import { socket_api } from "../../../Constant";
 import axios from "axios";
 import { Card, CardBody, CardHeader } from "reactstrap";

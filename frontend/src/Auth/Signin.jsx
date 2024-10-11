@@ -10,6 +10,7 @@ const Logins = () => {
   const callbackNav = (select) => {
     setSelected(select);
   };
+ 
 
   return (
     <Container fluid={true} className="p-0 login-page">

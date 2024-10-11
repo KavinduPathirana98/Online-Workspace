@@ -39,7 +39,6 @@ const LayoutRoutes = () => {
       setInx(data);
     });
     socket.on("block", (block) => {
-      console.log("amo amo", block);
       setBlocks(block);
     });
 
