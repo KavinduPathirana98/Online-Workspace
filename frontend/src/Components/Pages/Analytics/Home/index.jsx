@@ -167,6 +167,19 @@ const Home = () => {
       .post(socket_api + "api/room/search", model)
       .then((response) => {
         if (response.data.code === 1) {
+          response.data.data &&
+            response.data.data.map((room) => {
+              let totalBlocks = 0;
+              let totalTime = 0;
+              room.users &&
+                room.users.map((user) => {
+                  totalBlocks = totalBlocks + user.blockCount;
+                  totalTime = totalTime + user.onlineTime;
+                });
+              room.totalBlocks = totalBlocks;
+              room.totalTime = totalTime;
+            });
+          console.log(response.data, "room details");
           setMyRooms(response.data.data);
         }
       })
@@ -462,25 +475,33 @@ const Home = () => {
               myRooms.map((item) => (
                 <Col lg="3" md="6" key={item.roomID}>
                   <div className="pricingtable">
-                    {item.createdUser._id ===
-                    JSON.parse(localStorage.getItem("userAuth"))._id ? (
-                      <Row>
-                        <Col md={8}></Col>
-                        <Col md={3}>
-                          <Button
-                            title="settings"
-                            onClick={() => {
-                              toggleSettings(item.roomID);
-                            }}
-                          >
-                            <TeamOutlined />
-                          </Button>
+                    <Row>
+                      {item.totalBlocks >= 50 || item.totalTime >= 1000 ? (
+                        <Col md={8}>
+                          <i class="fa fa-star font-warning"></i>
                         </Col>
-                      </Row>
-                    ) : (
-                      ""
-                    )}
-
+                      ) : (
+                        ""
+                      )}
+                      {item.createdUser._id ===
+                      JSON.parse(localStorage.getItem("userAuth"))._id ? (
+                        <>
+                          <Col md={8}></Col>
+                          <Col md={3}>
+                            <Button
+                              title="settings"
+                              onClick={() => {
+                                toggleSettings(item.roomID);
+                              }}
+                            >
+                              <TeamOutlined />
+                            </Button>
+                          </Col>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </Row>
                     <div className="pricingtable-header">
                       <H3 attrH3={{ className: "title" }}>{item.roomName}</H3>
                     </div>

@@ -24,6 +24,7 @@ import axios from "axios";
 const LoginTab = ({ selected }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  localStorage.setItem("mix_background_layout", "dark-sidebar");
   const navigate = useNavigate();
   const login = () => {
     let model = {
@@ -38,6 +39,7 @@ const LoginTab = ({ selected }) => {
           toast.error(response.data.msg);
         } else {
           toast.success(response.data.msg);
+          localStorage.setItem("mix_background_layout", "dark-sidebar");
           let model = response.data.data[0].user;
           localStorage.setItem("userAuth", JSON.stringify(model));
           setValue(man);

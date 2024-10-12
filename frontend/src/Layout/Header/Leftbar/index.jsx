@@ -101,7 +101,8 @@ const Leftbar = () => {
         style={{ marginBottom: "-50px", fontWeight: "bolder" }}
       >
         {localStorage.getItem("roomDetails") &&
-          JSON.parse(localStorage.getItem("roomDetails"))[0].roomName}
+          "You are in room " +
+            JSON.parse(localStorage.getItem("roomDetails"))[0].roomName}
       </Col>
     </Fragment>
   );

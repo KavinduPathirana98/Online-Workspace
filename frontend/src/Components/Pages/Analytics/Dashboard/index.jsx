@@ -23,7 +23,7 @@ const Dashboard = () => {
         .then((response) => {
           let online = 0;
           let count = 0;
-          console.log(response.data.data);
+
           response.data.data &&
             response.data.data[0].users &&
             response.data.data[0].users.map((item) => {
@@ -58,12 +58,13 @@ const Dashboard = () => {
                 <Card>
                   <CardHeader>
                     <H5>
-                      {"Workspace Progress  (" +
+                      {`${item.user.fName} ${item.user.lName}`}
+                      {/* {"Workspace Progress  (" +
                         JSON.parse(localStorage.getItem("roomDetails"))[0]
                           .roomName +
-                        ")"}
+                        ")"} */}
                     </H5>
-                    <span>{`${item.user.fName} ${item.user.lName}`}</span>
+                    {/* <span>{`${item.user.fName} ${item.user.lName}`}</span> */}
                   </CardHeader>
                   <br></br>
                   <CardBody>
@@ -127,6 +128,20 @@ const Dashboard = () => {
                         </Col>
                       </Row>
                     </div>
+                    <br></br>
+
+                    <Row>
+                      <Col>
+                        {Number(
+                          (item.blockCount / totalContribution) * 100
+                        ).toFixed(2) < 50 ||
+                        Number((item.onlineTime / totalActive) * 100).toFixed(
+                          2
+                        ) < 50
+                          ? "Please improve your contribution to this room"
+                          : ""}
+                      </Col>
+                    </Row>
                   </CardBody>
                 </Card>
               </Col>
